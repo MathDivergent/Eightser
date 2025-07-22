@@ -12,10 +12,10 @@ namespace eightser
 
 constexpr xxeightser_archive_type_key_type bin = 0;
 
-#ifdef EIGHTSER_EXTENDED_SERIALIZATION
+#ifdef EIGHTSER_FULLY_ENABLE
 constexpr xxeightser_archive_type_key_type xml = 1;
 constexpr xxeightser_archive_type_key_type json = 2;
-#endif // EIGHTSER_EXTENDED_SERIALIZATION
+#endif // EIGHTSER_FULLY_ENABLE
 
 struct ioarchive_t
 {

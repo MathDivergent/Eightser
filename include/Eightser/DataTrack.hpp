@@ -20,8 +20,7 @@ namespace detail
 {
 
 template <class ArchiveType, typename PointerType,
-          EIGHTSER_REQUIRES(std::conjunction<meta::is_oarchive<ArchiveType>,
-                                             meta::is_pointer_to_any<PointerType>>::value)>
+          EIGHTSER_REQUIRES(meta::is_oarchive<ArchiveType>::value)>
 std::uintptr_t tracking_key(ArchiveType& archive, PointerType& pointer)
 {
     auto key = reinterpret_cast<std::uintptr_t>
@@ -34,8 +33,7 @@ std::uintptr_t tracking_key(ArchiveType& archive, PointerType& pointer)
 }
 
 template <class ArchiveType, typename PointerType,
-          EIGHTSER_REQUIRES(std::conjunction<meta::is_iarchive<ArchiveType>,
-                                             meta::is_pointer_to_any<PointerType>>::value)>
+          EIGHTSER_REQUIRES(meta::is_iarchive<ArchiveType>::value)>
 std::uintptr_t tracking_key(ArchiveType& archive, PointerType& pointer)
 {
     #ifdef EIGHTSER_DEBUG
@@ -49,54 +47,12 @@ std::uintptr_t tracking_key(ArchiveType& archive, PointerType& pointer)
     return key;
 }
 
-template <class ArchiveType, typename PointerType,
-          EIGHTSER_REQUIRES(std::conjunction<meta::is_oarchive<ArchiveType>,
-                                             meta::is_pointer_to_polymorphic<PointerType>>::value)>
-static ::xxeightser_instantiable_traits_key_type instantiable_key(ArchiveType& archive, PointerType& pointer)
-{
-    if (pointer == nullptr)
-        throw "The write pointer was not allocated.";
-
-    auto const hash = EIGHTSER_EXPRESSION_HASH(*pointer);
-
-    auto key = dynamic::instantiable_registry()->rtti_all.at(hash).key;
-    archive & key;
-
-    return key;
-}
-
-template <class ArchiveType, typename PointerType,
-          EIGHTSER_REQUIRES(std::conjunction<meta::is_iarchive<ArchiveType>,
-                                             meta::is_pointer_to_polymorphic<PointerType>>::value)>
-static ::xxeightser_instantiable_traits_key_type instantiable_key(ArchiveType& archive, PointerType& pointer)
-{
-    #ifndef EIGHTSER_GARBAGE_CHECK_DISABLE
-    if (pointer != nullptr)
-        throw "The read pointer must be initialized to nullptr.";
-    #endif // EIGHTSER_GARBAGE_CHECK_DISABLE
-
-    ::xxeightser_instantiable_traits_key_type key{};
-    archive & key;
-
-    return key;
-}
-
-template <class ArchiveType, typename PointerType>
-void native_save(ArchiveType& archive, PointerType& pointer, ::xxeightser_instantiable_traits_key_type track_key)
-{
-    if constexpr (meta::is_pointer_to_polymorphic<PointerType>::value)
-    {
-        instantiable_key(archive, pointer); // write class info
-    }
-}
-
 template <class ArchiveType, typename PointerType, typename PointerHoldType>
-void native_load(ArchiveType& archive, PointerType& pointer, PointerHoldType& address)
+void native_assign(ArchiveType& archive, PointerType& pointer, PointerHoldType& address)
 {
     if constexpr (meta::is_pointer_to_polymorphic<PointerType>::value)
     {
-        auto const key = instantiable_key(archive, pointer);
-        dynamic::instantiable_registry()->assign(pointer, address, key);
+        dynamic::instantiable_registry()->assign(pointer, address);
     }
     else
     {
@@ -112,57 +68,54 @@ void native_load(ArchiveType& archive, PointerType& pointer, PointerHoldType& ad
 
 template <class ArchiveType, typename PointerType,
           EIGHTSER_REQUIRES(std::conjunction<meta::is_oarchive<ArchiveType>,
-                                             meta::is_pointer_to_standard_layout<PointerType>>::value)>
+                                             meta::is_pointer_to_any<PointerType>>::value)>
 void strict(ArchiveType& archive, PointerType& pointer)
 {
     if (pointer == nullptr)
         throw "The write pointer must be allocated.";
 
-    archive & (*pointer);
+    if constexpr (meta::is_pointer_to_polymorphic<PointerType>::value)
+    {
+        auto const hash = EIGHTSER_EXPRESSION_HASH(*pointer);
+        auto const& proxy = dynamic::instantiable_registry()->dynamic_all.at(hash);
+
+        auto key = proxy.key;
+        archive & key;
+
+        dynamic::instantiable_registry()->save(archive, pointer, proxy);
+    }
+    else
+    {
+        archive & (*pointer);
+    }
 }
 
 template <class ArchiveType, typename PointerType, typename PointerHoldType,
-          EIGHTSER_REQUIRES(std::conjunction<meta::is_iarchive<ArchiveType>,
-                                             meta::is_pointer_to_standard_layout<PointerType>>::value)>
-void strict(ArchiveType& archive, PointerType& pointer, PointerHoldType& cache)
-{
-    #ifndef EIGHTSER_GARBAGE_CHECK_DISABLE
-    if (pointer != nullptr)
-        throw "The read pointer must be initialized to nullptr.";
-    #endif // EIGHTSER_GARBAGE_CHECK_DISABLE
-
-    memory::allocate(pointer);
-    cache = hold_type_erasure(pointer);
-
-    archive & (*pointer);
-}
-
-template <class ArchiveType, typename PointerType,
-          EIGHTSER_REQUIRES(std::conjunction<meta::is_oarchive<ArchiveType>,
-                                             meta::is_pointer_to_polymorphic<PointerType>>::value)>
-void strict(ArchiveType& archive, PointerType& pointer)
-{
-    detail::instantiable_key(archive, pointer);
-    dynamic::instantiable_registry()->save(archive, pointer);
-}
-
-template <class ArchiveType, typename PointerType, typename PointerHoldType,
-          EIGHTSER_REQUIRES(std::conjunction<meta::is_iarchive<ArchiveType>,
-                                             meta::is_pointer_to_polymorphic<PointerType>>::value)>
-void strict(ArchiveType& archive, PointerType& pointer, PointerHoldType& cache)
-{
-    auto const key = detail::instantiable_key(archive, pointer);
-    dynamic::instantiable_registry()->load(archive, pointer, key, cache);
-}
-
-// verison without cache using
-template <class ArchiveType, typename PointerType,
           EIGHTSER_REQUIRES(std::conjunction<meta::is_iarchive<ArchiveType>,
                                              meta::is_pointer_to_any<PointerType>>::value)>
-void strict(ArchiveType& archive, PointerType& pointer)
+void strict(ArchiveType& archive, PointerType& pointer, PointerHoldType& cache)
 {
-    typename memory::pointer_traits<PointerType>::template pointer_template<INSTANTIABLE_TYPE> cache = nullptr; // mock
-    strict(archive, pointer, cache);
+    #ifdef EIGHTSER_GARBAGE_CHECK_ENABLE
+    if (pointer != nullptr)
+        throw "The read pointer must be initialized to nullptr.";
+    #endif // EIGHTSER_GARBAGE_CHECK_ENABLE
+
+    if constexpr (meta::is_pointer_to_polymorphic<PointerType>::value)
+    {
+        ::xxeightser_instantiable_traits_key_type key{};
+        archive & key;
+
+        auto const& proxy = dynamic::instantiable_registry()->all.at(key);
+
+        dynamic::instantiable_registry()->load(archive, pointer, proxy, cache);
+    }
+    else
+    {
+        memory::allocate(pointer);
+        cache = hold_type_erasure(pointer);
+
+        archive & (*pointer);
+    }
 }
 
 template <class ArchiveType, typename PointerType,
@@ -186,10 +139,6 @@ void track(ArchiveType& archive, PointerType& pointer)
     {
         is_tracking = true;
         strict(archive, pointer); // call the strict serialization of not tracking pointer
-    }
-    else
-    {
-        detail::native_save(archive, pointer, key);
     }
 }
 
@@ -223,12 +172,12 @@ void track(ArchiveType& archive, PointerType& pointer)
     // need to overload tracking
     using pointer_hold_type = typename memory::pointer_traits<PointerType>::template pointer_template<INSTANTIABLE_TYPE>;
 
-    #ifndef EIGHTSER_GARBAGE_CHECK_DISABLE
+    #ifdef EIGHTSER_GARBAGE_CHECK_ENABLE
     if (pointer != nullptr)
         throw "The read track pointer must be initialized to nullptr.";
-    #endif // EIGHTSER_GARBAGE_CHECK_DISABLE
+    #endif // EIGHTSER_GARBAGE_CHECK_ENABLE
 
-    auto const key = detail::tracking_key(archive, pointer); // serialize refer info
+    auto const key = detail::tracking_key(archive, pointer); // deserialize refer info
     if (not key) return;
 
     auto& address = archive.tracking().pointer(pointer_hold_type())[key];
@@ -239,7 +188,7 @@ void track(ArchiveType& archive, PointerType& pointer)
     }
     else
     {
-        detail::native_load(archive, pointer, address);
+        detail::native_assign(archive, pointer, address);
     }
 }
 
@@ -269,7 +218,10 @@ template <class ArchiveType, typename PointerType,
 void raw(ArchiveType& archive, PointerType& pointer)
 {
     if (detail::tracking_key(archive, pointer)) // serialize refer info
-        strict(archive, pointer);
+    {
+        typename memory::pointer_traits<PointerType>::template pointer_template<INSTANTIABLE_TYPE> cache = nullptr; // mock
+        strict(archive, pointer, cache);
+    }
 }
 
 namespace apply

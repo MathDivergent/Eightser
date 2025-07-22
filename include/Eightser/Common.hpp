@@ -65,11 +65,11 @@ SERIALIZABLE_DECLARATION_INIT()
 CONDITIONAL_SERIALIZABLE(saveload, pointer, xxeightser_is_pointer<S>::value)
     SERIALIZATION
     (
-        #ifdef EIGHTSER_PTRTRACK_DISABLE
-        ::eightser::raw(archive, pointer);
-        #else
+        #ifdef EIGHTSER_PTRTRACK_ENABLE
         ::eightser::track(archive, pointer);
-        #endif // EIGHTSER_PTRTRACK_DISABLE
+        #else
+        ::eightser::raw(archive, pointer);
+        #endif // EIGHTSER_PTRTRACK_ENABLE
     )
 SERIALIZABLE_INIT()
 

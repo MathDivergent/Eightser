@@ -10,8 +10,13 @@ set(CMAKE_SHARED_LIBRARY_PREFIX "")
 
 # [[Options]]
 option(EIGHTSER_BUILD_SHARED_LIBS "Build shared libraies by Default" ON)
+option(EIGHTSER_FULLY_ENABLE "Build with fully by Default" OFF)
 option(EIGHTSER_RTTI_ENABLE "Build with RTTI by Default" ON)
-option(EIGHTSER_EXTENDED_SERIALIZATION "Build extended serialization by Default" OFF)
+option(EIGHTSER_PTRTRACK_ENABLE "Build with pointer track by Default" ON)
+option(EIGHTSER_FILESTREAM_ENABLE "Build with std::fstream by Default" ON)
+option(EIGHTSER_TYPE_PORTABLE_ENABLE "Build with type portable by Default" ON)
+option(EIGHTSER_ANY_SUPPORT_ENABLE "Build with std::any support by Default" ON)
+option(EIGHTSER_GARBAGE_CHECK_ENABLE "Build with garbage check by Default" ON)
 option(EIGHTSER_BUILD_TEST_LIBS "Build testing libraies by Default" OFF)
 
 
@@ -48,8 +53,8 @@ if(EIGHTSER_BUILD_SHARED_LIBS)
     set_target_properties(Eightser PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
 endif()
 
-if(EIGHTSER_EXTENDED_SERIALIZATION)
-    target_compile_definitions(Eightser PUBLIC "EIGHTSER_EXTENDED_SERIALIZATION")
+if(EIGHTSER_FULLY_ENABLE)
+    target_compile_definitions(Eightser PUBLIC "EIGHTSER_FULLY_ENABLE")
 endif()
 
 if(EIGHTSER_RTTI_ENABLE)
@@ -57,6 +62,26 @@ if(EIGHTSER_RTTI_ENABLE)
     target_compile_definitions(Eightser PUBLIC "EIGHTSER_RTTI_ENABLE")
 else()
     target_compile_options(Eightser PUBLIC -fno-rtti)
+endif()
+
+if(EIGHTSER_PTRTRACK_ENABLE)
+    target_compile_definitions(Eightser PUBLIC "EIGHTSER_PTRTRACK_ENABLE")
+endif()
+
+if(EIGHTSER_FILESTREAM_ENABLE)
+    target_compile_definitions(Eightser PUBLIC "EIGHTSER_FILESTREAM_ENABLE")
+endif()
+
+if(EIGHTSER_TYPE_PORTABLE_ENABLE)
+    target_compile_definitions(Eightser PUBLIC "EIGHTSER_TYPE_PORTABLE_ENABLE")
+endif()
+
+if(EIGHTSER_ANY_SUPPORT_ENABLE)
+    target_compile_definitions(Eightser PUBLIC "EIGHTSER_ANY_SUPPORT_ENABLE")
+endif()
+
+if(EIGHTSER_GARBAGE_CHECK_ENABLE)
+    target_compile_definitions(Eightser PUBLIC "EIGHTSER_GARBAGE_CHECK_ENABLE")
 endif()
 
 

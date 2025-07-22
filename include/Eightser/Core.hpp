@@ -24,11 +24,9 @@
 EXPORT_SERIALIZABLE_ARCHIVE(0, i, ::eightser::iarchive_t<::eightser::wrapper::ibyte_stream_t<>>)
 EXPORT_SERIALIZABLE_ARCHIVE(0, o, ::eightser::oarchive_t<::eightser::wrapper::obyte_stream_t<>>)
 
-#ifndef EIGHTSER_DEFAULT_DISABLE
-
+#ifdef EIGHTSER_FILESTREAM_ENABLE
 EXPORT_SERIALIZABLE_ARCHIVE(1, i, ::eightser::iarchive_t<::eightser::wrapper::ifile_stream_t<>>)
 EXPORT_SERIALIZABLE_ARCHIVE(1, o, ::eightser::oarchive_t<::eightser::wrapper::ofile_stream_t<>>)
-
-#endif // EIGHTSER_DEFAULT_DISABLE
+#endif // EIGHTSER_FILESTREAM_ENABLE
 
 #endif // EIGHTSER_CORE_HPP

@@ -28,10 +28,7 @@ template <class BaseType, class ArchiveType, class DerivedType,
                                              std::is_base_of<BaseType, DerivedType>>::value)>
 void virtual_base(ArchiveType& archive, DerivedType& object)
 {
-    #ifdef EIGHTSER_PTRTRACK_DISABLE
-    if (EIGHTSER_EXPRESSION_HASH(object) == EIGHTSER_TYPE_HASH(DerivedType))
-        base<Base>(archive, object);
-    #else
+    #ifdef EIGHTSER_PTRTRACK_ENABLE
     auto address = hold_type_erasure(std::addressof(object));
 
     auto const key = reinterpret_cast<std::uintptr_t>(address);
@@ -43,7 +40,10 @@ void virtual_base(ArchiveType& archive, DerivedType& object)
         is_tracking = true;
         base<BaseType>(archive, object);
     }
-    #endif // EIGHTSER_PTRTRACK_DISABLE
+    #else
+    if (EIGHTSER_EXPRESSION_HASH(object) == EIGHTSER_TYPE_HASH(DerivedType))
+        base<Base>(archive, object);
+    #endif // EIGHTSER_PTRTRACK_ENABLE
 }
 
 namespace detail

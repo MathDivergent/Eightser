@@ -51,7 +51,7 @@ public:
 
 public:
     std::unordered_map<::xxeightser_instantiable_traits_key_type, instantiable_proxy_type> all;
-    std::unordered_map<std::uint64_t, instantiable_proxy_type> rtti_all;
+    std::unordered_map<std::uint64_t, instantiable_proxy_type> dynamic_all;
 
 public:
     template <typename InstantiableType> struct is_instantiable
@@ -144,7 +144,7 @@ public:
             all.emplace(instantiable_key, proxy);
 
             auto const hash = EIGHTSER_TYPE_HASH(InstantiableType);
-            rtti_all.emplace(hash, proxy);
+            dynamic_all.emplace(hash, proxy);
         }
     }
 
@@ -168,43 +168,30 @@ public:
     }
 
     template <typename PointerType>
-    void save(ioarchive_t& archive, PointerType& pointer) const
+    void save(ioarchive_t& archive, PointerType& pointer, instantiable_proxy_type const& proxy) const
     {
-        if (pointer == nullptr)
-            throw "The write pointer was not allocated.";
-
-        auto raw_pointer = memory::raw(pointer);
-        auto const hash = EIGHTSER_EXPRESSION_HASH(*raw_pointer);
-
-        rtti_all.at(hash).save(archive, raw_pointer);
+        proxy.save(archive, memory::raw(pointer));
     }
 
     template <typename PointerType, typename PointerHoldType>
-    void load(ioarchive_t& archive, PointerType& pointer, ::xxeightser_instantiable_traits_key_type key, PointerHoldType& cache) const
+    void load(ioarchive_t& archive, PointerType& pointer, instantiable_proxy_type const& proxy, PointerHoldType& cache) const
     {
-        #ifndef EIGHTSER_GARBAGE_CHECK_DISABLE
-        if (pointer != nullptr)
-            throw "The read pointer must be initialized to nullptr.";
-        #endif // EIGHTSER_GARBAGE_CHECK_DISABLE
-
-        clone(pointer, key);
+        clone(pointer, proxy);
         cache = pointer;
 
-        auto raw_pointer = memory::raw(pointer);
-        auto const hash = EIGHTSER_EXPRESSION_HASH(*raw_pointer);
-
-        rtti_all.at(hash).load(archive, raw_pointer);
+        proxy.load(archive, memory::raw(pointer));
     }
 
 public:
     template <typename PointerType>
-    void clone(PointerType& pointer, ::xxeightser_instantiable_traits_key_type key) const
+    void clone(PointerType& pointer, instantiable_proxy_type const& proxy) const
     {
         using pointer_traits = memory::pointer_traits<PointerType>;
+
         using serializable_type = typename pointer_traits::element_type;
         using pointer_hold_type = typename pointer_traits::template pointer_template<INSTANTIABLE_TYPE>;
 
-        auto instance = all.at(key).instantiable_proxy_overload_t<pointer_hold_type>::xxclone();
+        auto instance = proxy.instantiable_proxy_overload_t<pointer_hold_type>::xxclone();
 
         #ifdef EIGHTSER_RTTI_ENABLE
         pointer = memory::dynamic_pointer_cast<serializable_type>(instance);
@@ -214,16 +201,9 @@ public:
     }
 
     template <typename PointerType, typename PointerHoldType>
-    void assign(PointerType& pointer, PointerHoldType const& address, ::xxeightser_instantiable_traits_key_type key) const
+    void assign(PointerType& pointer, PointerHoldType const& address) const
     {
-        using pointer_traits = memory::pointer_traits<PointerType>;
-        using serializable_type = typename pointer_traits::element_type;
-        using pointer_hold_type = typename pointer_traits::template pointer_template<INSTANTIABLE_TYPE>;
-
-        #ifndef EIGHTSER_GARBAGE_CHECK_DISABLE
-        if (pointer != nullptr)
-            throw "The read pointer must be initialized to nullptr.";
-        #endif // EIGHTSER_GARBAGE_CHECK_DISABLE
+        using serializable_type = typename memory::pointer_traits<PointerType>::element_type;
 
         #ifdef EIGHTSER_RTTI_ENABLE
         pointer = memory::dynamic_pointer_cast<serializable_type>(address);

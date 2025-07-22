@@ -139,34 +139,33 @@ TEST(TestLibrary, TestInstantiableRegistry)
 
     {
         auto success = false;
-        try { Square* r = nullptr; instantiable_registry()->clone(r, key); } catch(...) { success = true; }
+        try
+        {
+            Square* r = nullptr;
+            auto const& proxy = instantiable_registry()->all.at(key);
+            instantiable_registry()->clone(r, proxy);
+        }
+        catch(...)
+        {
+            success = true;
+        }
 
         EXPECT("clone non-instantiable raw", success);
     }
     {
         auto success = false;
-        try { std::shared_ptr<Square> s = nullptr; instantiable_registry()->clone(s, key); } catch(...) { success = true; }
+        try
+        {
+            std::shared_ptr<Square> s = nullptr;
+            auto const& proxy = instantiable_registry()->all.at(key);
+            instantiable_registry()->clone(s, proxy);
+        }
+        catch(...)
+        {
+            success = true;
+        }
 
         EXPECT("clone non-instantiable shared", success);
-    }
-
-    {
-        auto r = new Square;
-
-        auto success = false;
-        try { INSTANTIABLE_TYPE* address = nullptr; (void)instantiable_registry()->assign(r, address, key); } catch(...) { success = true; }
-
-        EXPECT("cast non-instantiable raw", success);
-
-        delete r; // clean up
-    }
-    {
-        auto s = std::make_shared<Square>();
-
-        auto success = false;
-        try { std::shared_ptr<INSTANTIABLE_TYPE> address = nullptr; (void)instantiable_registry()->assign(s, address, key); } catch(...) { success = true; }
-
-        EXPECT("cast non-instantiable shared", success);
     }
 }
 
@@ -248,7 +247,7 @@ TEST(TestLibrary, TestExportInstantiable)
         std::shared_ptr<MyClass> b = std::make_shared<MyDerivedClass>();
         auto& rb = *b;
 
-        EXPECT("instantiable runtime key.traits", instantiable_registry()->rtti_all.at(EIGHTSER_EXPRESSION_HASH(rb)).key == sv_dc);
+        EXPECT("instantiable runtime key.traits", instantiable_registry()->dynamic_all.at(EIGHTSER_EXPRESSION_HASH(rb)).key == sv_dc);
     }
 }
 
@@ -274,6 +273,7 @@ TEST(TestLibrary, TestStreamWrapper)
         EXPECT("char storage", s == s_s);
     }
 
+    #ifdef EIGHTSER_FILESTREAM_ENABLE
     storage.clear();
     {
         std::string s = s_s;
@@ -300,6 +300,7 @@ TEST(TestLibrary, TestStreamWrapper)
 
         EXPECT("storage converting", s == s_s);
     }
+    #endif // EIGHTSER_FILESTREAM_ENABLE
 }
 
 // TODO: add another examples
@@ -820,7 +821,7 @@ TEST(TestLibrary, TestAbstract)
         const auto hash = EIGHTSER_EXPRESSION_HASH(ri);
         const auto key = instantiable_registry()->key<Implementation>();
 
-        EXPECT("traits", instantiable_registry()->rtti_all.at(hash).key == instantiable_registry()->all.at(key).key);
+        EXPECT("traits", instantiable_registry()->dynamic_all.at(hash).key == instantiable_registry()->all.at(key).key);
     }
 }
 

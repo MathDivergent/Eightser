@@ -3,7 +3,10 @@
 
 #include <cstddef> // size_t
 #include <vector> // vector
+
+#ifdef EIGHTSER_FILESTREAM_ENABLE
 #include <fstream> // ifstream, ofstream
+#endif // EIGHTSER_FILESTREAM_ENABLE
 
 #include <Eightser/Core/Memory.hpp>
 
@@ -74,6 +77,7 @@ public:
     }
 };
 
+#ifdef EIGHTSER_FILESTREAM_ENABLE
 template <typename OutputStreamType = std::ofstream>
 class ofile_stream_t
 {
@@ -105,6 +109,7 @@ public:
         file.read(memory::byte_cast(data), memory_size);
     }
 };
+#endif // EIGHTSER_FILESTREAM_ENABLE
 
 } // namespace wrapper
 
