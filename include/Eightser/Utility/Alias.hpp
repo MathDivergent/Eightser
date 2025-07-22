@@ -66,8 +66,6 @@ TEMPLATE_SERIALIZABLE(save, alias, template <typename ElementType>, ::eightser::
 
         if (not is_tracking)
             throw "The write alias_t must be tracked before.";
-
-        ::eightser::detail::native_save(archive, pointer, key);
     )
 SERIALIZABLE_INIT()
 
@@ -76,10 +74,10 @@ TEMPLATE_SERIALIZABLE(load, alias, template <typename ElementType>, ::eightser::
     (
         using pointer_hold_type = INSTANTIABLE_TYPE*; // need to overload tracking
 
-        #ifndef EIGHTSER_GARBAGE_CHECK_DISABLE
+        #ifdef EIGHTSER_GARBAGE_CHECK_ENABLE
         if (alias.is_refer())
             throw "The read alias_t must be null.";
-        #endif // EIGHTSER_GARBAGE_CHECK_DISABLE
+        #endif // EIGHTSER_GARBAGE_CHECK_ENABLE
 
         std::uintptr_t key{};
         archive & key;
@@ -90,7 +88,7 @@ TEMPLATE_SERIALIZABLE(load, alias, template <typename ElementType>, ::eightser::
         if (address == nullptr)
             throw "The read alias_t must be tracked before.";
 
-        ::eightser::detail::native_load(archive, pointer, address);
+        ::eightser::detail::native_assign(archive, pointer, address);
 
         alias.set(*pointer); // pointer will never nullptr
     )

@@ -22,9 +22,9 @@ template <typename SerializableType> void serializable()
     dynamic::instantiable_registry()->add<SerializableType>();
 
     #ifdef EIGHTSER_RTTI_ENABLE
-    #ifndef EIGHTSER_ANY_SUPPORT_DISABLE
+    #ifdef EIGHTSER_ANY_SUPPORT_ENABLE
     dynamic::any_registry()->add<SerializableType>();
-    #endif // EIGHTSER_ANY_SUPPORT_DISABLE
+    #endif // EIGHTSER_ANY_SUPPORT_ENABLE
     #endif // EIGHTSER_RTTI_ENABLE
 }
 

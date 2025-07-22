@@ -4,7 +4,7 @@
 namespace eightser
 {
 
-#ifndef EIGHTSER_TYPE_PORTABLE_DISABLE
+#ifdef EIGHTSER_TYPE_PORTABLE_ENABLE
 
 static_assert(sizeof(char) == 1, "Require character size.");
 
@@ -13,7 +13,7 @@ static_assert(sizeof(double) == 8, "Require double precision floation point numb
 
 static_assert(sizeof(int) == 4, "Require integer number size.");
 
-#endif // EIGHTSER_TYPE_PORTABLE_DISABLE
+#endif // EIGHTSER_TYPE_PORTABLE_ENABLE
 
 } // namespace eightser
 

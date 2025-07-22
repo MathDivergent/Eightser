@@ -1,5 +1,5 @@
 #ifdef EIGHTSER_RTTI_ENABLE
-#ifndef EIGHTSER_ANY_SUPPORT_DISABLE
+#ifdef EIGHTSER_ANY_SUPPORT_ENABLE
 
 #include <EightserTestingBase.hpp>
 
@@ -152,5 +152,5 @@ TEST(TestUtility, TestAny)
     }
 }
 
-#endif // EIGHTSER_ANY_SUPPORT_DISABLE
+#endif // EIGHTSER_ANY_SUPPORT_ENABLE
 #endif // EIGHTSER_RTTI_ENABLE

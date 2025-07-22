@@ -5,7 +5,7 @@
 
 #include <Eightser/Detail/Preprocessor.hpp>
 
-#ifdef EIGHTSER_EXTENDED_SERIALIZATION
+#ifdef EIGHTSER_FULLY_ENABLE
     #define SERIALIZATION(...) EIGHTSER_SERIALIZATION(bin, __VA_ARGS__)
     #define SERIALIZATION_XML(...) EIGHTSER_SERIALIZATION(xml, __VA_ARGS__)
     #define SERIALIZATION_JSON(...) EIGHTSER_SERIALIZATION(json, __VA_ARGS__)
@@ -48,9 +48,9 @@
 
 
 // impl
-#ifdef EIGHTSER_EXTENDED_SERIALIZATION
+#ifdef EIGHTSER_FULLY_ENABLE
     #define EIGHTSER_SERIALIZATION(archive_type, ...) if (archive.type == ::eightser::archive_type) { __VA_ARGS__ return; }
-#endif // EIGHTSER_EXTENDED_SERIALIZATION
+#endif // EIGHTSER_FULLY_ENABLE
 
 #define EIGHTSER_TEMPLATE_SERIALIZABLE(mode, object, object_template_header, ...) \
     EIGHTSER_DEPAREN(object_template_header) \

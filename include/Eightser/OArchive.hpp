@@ -36,14 +36,14 @@ public:
     struct oarchive_track_t : public oarchive_track_overload_t<HoldPointerTypes>...
     {
     protected:
-        #ifndef EIGHTSER_PTRTRACK_DISABLE
+        #ifdef EIGHTSER_PTRTRACK_ENABLE
         std::unordered_map<std::uintptr_t, std::unordered_map<::xxeightser_instantiable_traits_key_type, bool>> xxhierarchy;
-        #endif // EIGHTSER_PTRTRACK_DISABLE
+        #endif // EIGHTSER_PTRTRACK_ENABLE
     public:
         using oarchive_track_overload_t<HoldPointerTypes>::pointer...;
-        #ifndef EIGHTSER_PTRTRACK_DISABLE
+        #ifdef EIGHTSER_PTRTRACK_ENABLE
         auto hierarchy() noexcept -> decltype(xxhierarchy)& { return xxhierarchy; }
-        #endif // EIGHTSER_PTRTRACK_DISABLE
+        #endif // EIGHTSER_PTRTRACK_ENABLE
 
         #ifdef EIGHTSER_DEBUG
         template <typename PointerType>
