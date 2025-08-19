@@ -16,7 +16,7 @@ The type registrar will allow you to properly serialize and deserialize polymorp
 
 A library implemented purely in C++17.
 
-See last stable library version 3.2.0 [here](https://github.com/MathDivergent/Eightser/releases).
+See last stable library version 3.3.0 [here](https://github.com/MathDivergent/Eightser/releases).
 
 ## Functional:
 
