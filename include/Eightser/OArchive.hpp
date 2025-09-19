@@ -97,13 +97,6 @@ oarchive_t<wrapper::obyte_stream_t<OutputStreamType>> oarchive(OutputStreamType&
     return { stream, type };
 }
 
-template <template <class, typename...> class StreamWrapperTemplate,
-          typename OutputStreamType>
-oarchive_t<StreamWrapperTemplate<OutputStreamType>> oarchive(OutputStreamType& stream, ::xxeightser_archive_type_key_type type = bin)
-{
-    return { stream, type };
-}
-
 template <class StreamWrapperType,
           typename OutputStreamType>
 oarchive_t<StreamWrapperType> oarchive(OutputStreamType& stream, ::xxeightser_archive_type_key_type type = bin)

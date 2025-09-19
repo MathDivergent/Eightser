@@ -295,7 +295,7 @@ TEST(TestLibrary, TestStreamWrapper)
 
         std::ifstream file("test.bin", std::ios::binary);
 
-        auto ar = iarchive<eightser::wrapper::ifile_stream_t>(file);
+        auto ar = iarchive<eightser::wrapper::ifile_stream_t<>>(file);
         ar & s;
 
         EXPECT("storage converting", s == s_s);
@@ -986,4 +986,69 @@ TEST(TestLibrary, TestPolymorphicArchive)
         EXPECT("bad iarchive", success);
     }
     #endif // EIGHTSER_DEBUG
+}
+
+TEST(TestLibrary, TestSwapEndian)
+{
+    static std::uint16_t sing = 0x0001;
+    static auto is_little_endian = reinterpret_cast<char&>(sing) == 1;
+
+    static std::int32_t s_number = 0x12345678;
+
+    {
+        std::vector<unsigned char> storage;
+        if (is_little_endian)
+            storage = { 0x78, 0x56, 0x34, 0x12 };
+        else
+            storage = { 0x12, 0x34, 0x56, 0x78 };
+
+        auto ar = iarchive(storage);
+
+        std::int32_t number;
+        ar & number;
+
+        EXPECT("value.read", number == s_number);
+    }
+    {
+        std::vector<unsigned char> storage; // swapped
+        if (is_little_endian)
+            storage = { 0x12, 0x34, 0x56, 0x78 };
+        else
+            storage = { 0x78, 0x56, 0x34, 0x12 };
+
+        auto ar = iarchive<eightser::ibyte_stream_t<std::vector<unsigned char>, true>>(storage);
+
+        std::int32_t number;
+        ar & number;
+
+        EXPECT("value.read.endian swap", number == s_number);
+    }
+    {
+        static std::vector<unsigned char> s_storage;
+        if (is_little_endian)
+            s_storage = { 0x78, 0x56, 0x34, 0x12 };
+        else
+            s_storage = { 0x12, 0x34, 0x56, 0x78 };
+
+        std::vector<unsigned char> storage;
+
+        auto ar = oarchive(storage);
+        ar & s_number;
+
+        EXPECT("value.write", storage == s_storage);
+    }
+    {
+        static std::vector<unsigned char> s_storage; // swapped
+        if (is_little_endian)
+            s_storage = { 0x12, 0x34, 0x56, 0x78 };
+        else
+            s_storage = { 0x78, 0x56, 0x34, 0x12 };
+
+        std::vector<unsigned char> storage;
+
+        auto ar = oarchive<eightser::obyte_stream_t<std::vector<unsigned char>, true>>(storage);
+        ar & s_number;
+
+        EXPECT("value.write.endian swap", storage == s_storage);
+    }
 }

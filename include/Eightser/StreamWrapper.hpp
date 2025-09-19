@@ -17,10 +17,10 @@
 namespace eightser
 {
 
-namespace wrapper
+inline namespace wrapper
 {
 
-template <typename OutputStreamType = std::vector<unsigned char>>
+template <typename OutputStreamType = std::vector<unsigned char>, bool EndianSwap = false>
 class obyte_stream_t
 {
 protected:
@@ -38,19 +38,32 @@ public:
         storage.reserve(EIGHTSER_BYTE_STREAM_RESERVE_SIZE); // default reserve memory
     }
 
-    template <typename CharType>
-    void call(CharType const* data, std::size_t size)
+    template <typename ArithmeticType>
+    void call(ArithmeticType const* data, std::size_t size)
     {
         auto it = memory::const_byte_cast<item_type>(data);
-        while (size > 0)
+        auto it_end = memory::const_byte_cast<item_type>(data + size);
+
+        while (it != it_end)
         {
-            storage.emplace_back(*it++);
-            --size;
+            for (std::size_t arithmetic_byte = 0; arithmetic_byte < sizeof(ArithmeticType); ++arithmetic_byte)
+            {
+                if constexpr (EndianSwap)
+                {
+                    storage.emplace_back(it[sizeof(ArithmeticType) - 1 - arithmetic_byte]);
+                }
+                else
+                {
+                    storage.emplace_back(it[arithmetic_byte]);
+                }
+            }
+
+            it += sizeof(ArithmeticType);
         }
     }
 };
 
-template <typename InputStreamType = std::vector<unsigned char>>
+template <typename InputStreamType = std::vector<unsigned char>, bool EndianSwap = false>
 struct ibyte_stream_t
 {
 protected:
@@ -63,16 +76,29 @@ public:
     InputStreamType& storage;
     std::size_t offset;
 
-    ibyte_stream_t(InputStreamType& stream) noexcept : storage(stream), offset() {}
+    ibyte_stream_t(InputStreamType& stream) noexcept : storage(stream), offset(0) {}
 
-    template <typename CharType>
-    void call(CharType* data, std::size_t size)
+    template <typename ArithmeticType>
+    void call(ArithmeticType* data, std::size_t size)
     {
         auto it = memory::byte_cast<item_type>(data);
-        while (size > 0)
+        auto it_end = memory::byte_cast<item_type>(data + size);
+
+        while (it != it_end)
         {
-            *it++ = storage[offset++];
-            --size;
+            for (std::size_t arithmetic_byte = 0; arithmetic_byte < sizeof(ArithmeticType); ++arithmetic_byte)
+            {
+                if constexpr (EndianSwap)
+                {
+                    it[sizeof(ArithmeticType) - 1 - arithmetic_byte] = storage[offset++];
+                }
+                else
+                {
+                    it[arithmetic_byte] = storage[offset++];
+                }
+            }
+
+            it += sizeof(ArithmeticType);
         }
     }
 };
@@ -87,10 +113,10 @@ public:
 public:
     ofile_stream_t(OutputStreamType& stream) noexcept : file(stream) {}
 
-    template <typename CharType>
-    void call(CharType const* data, std::size_t memory_size)
+    template <typename ArithmeticType>
+    void call(ArithmeticType const* data, std::size_t size)
     {
-        file.write(memory::const_byte_cast(data), memory_size);
+        file.write(memory::const_byte_cast(data), size * sizeof(ArithmeticType));
     }
 };
 
@@ -103,15 +129,15 @@ public:
 public:
     ifile_stream_t(InputStreamType& stream) noexcept : file(stream) {}
 
-    template <typename CharType>
-    void call(CharType* data, std::size_t memory_size)
+    template <typename ArithmeticType>
+    void call(ArithmeticType* data, std::size_t size)
     {
-        file.read(memory::byte_cast(data), memory_size);
+        file.read(memory::byte_cast(data), size * sizeof(ArithmeticType));
     }
 };
 #endif // EIGHTSER_FILESTREAM_ENABLE
 
-} // namespace wrapper
+} // inline namespace wrapper
 
 } // namespace eightser
 
