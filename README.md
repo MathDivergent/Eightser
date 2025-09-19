@@ -16,7 +16,7 @@ The type registrar will allow you to properly serialize and deserialize polymorp
 
 A library implemented purely in C++17.
 
-See last stable library version 3.3.0 [here](https://github.com/MathDivergent/Eightser/releases).
+See last stable library version 3.4.0 [here](https://github.com/MathDivergent/Eightser/releases).
 
 ## Functional:
 
@@ -25,6 +25,7 @@ See last stable library version 3.3.0 [here](https://github.com/MathDivergent/Ei
 - Enum or scoped enum
 - Static or dynamic array
 - Bit fields
+- Little-endian, Big-endian
 
 See full list [here](https://github.com/MathDivergent/Eightser/tree/master/include/Eightser/BuiltIn).
 

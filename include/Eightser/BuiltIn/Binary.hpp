@@ -14,7 +14,7 @@ template <class ArchiveType, typename SerializableType,
           EIGHTSER_REQUIRES(meta::is_ioarchive<ArchiveType>::value)>
 void binary(ArchiveType& archive, SerializableType& data)
 {
-    archive.stream().call(std::addressof(data), sizeof(SerializableType));
+    archive.stream().call(std::addressof(data), 1);
 }
 
 namespace apply

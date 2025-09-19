@@ -85,13 +85,6 @@ iarchive_t<wrapper::ibyte_stream_t<InputStreamType>> iarchive(InputStreamType& s
     return { stream, type };
 }
 
-template <template <class, typename...> class StreamWrapperTemplate,
-          typename InputStreamType>
-iarchive_t<StreamWrapperTemplate<InputStreamType>> iarchive(InputStreamType& stream, ::xxeightser_archive_type_key_type type = bin)
-{
-    return { stream, type };
-}
-
 template <class StreamWrapperType,
           typename InputStreamType>
 iarchive_t<StreamWrapperType> iarchive(InputStreamType& stream, ::xxeightser_archive_type_key_type type = bin)

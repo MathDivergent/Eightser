@@ -64,7 +64,7 @@ void fast(ArchiveType& archive, SerializableType& object)
     archive.stream().call
     (
         const_cast<item_type*>(utility::data(object)),
-        utility::size(object) * sizeof(item_type)
+        utility::size(object)
     );
 }
 
