@@ -64,22 +64,18 @@ private:
             try_call_impl<DerivedArchiveType>(static_cast<DerivedArchiveType&>(archive), data);
         }
     }
-
-    template <class DerivedArchiveType, typename SerializableType>
+    template <class DerivedArchiveType, typename SerializableType,
+               EIGHTSER_REQUIRES(meta::is_oarchive<DerivedArchiveType>::value)>
     static void try_call_impl(ioarchive_t& archive, SerializableType& data)
     {
-        if constexpr (meta::is_oarchive<DerivedArchiveType>::value)
-        {
-            ::xxeightser<SerializableType>::save(static_cast<DerivedArchiveType&>(archive), data);
-        }
-        else if constexpr (meta::is_iarchive<DerivedArchiveType>::value)
-        {
-            ::xxeightser<SerializableType>::load(static_cast<DerivedArchiveType&>(archive), data);
-        }
-        else
-        {
-            static_assert(meta::to_false<DerivedArchiveType>(), "The read/write archive has not traits.");
-        }
+        ::xxeightser<SerializableType>::save(static_cast<DerivedArchiveType&>(archive), data);
+    }
+
+    template <class DerivedArchiveType, typename SerializableType,
+              EIGHTSER_REQUIRES(meta::is_iarchive<DerivedArchiveType>::value)>
+    static void try_call_impl(ioarchive_t& archive, SerializableType& data)
+    {
+        ::xxeightser<SerializableType>::load(static_cast<DerivedArchiveType&>(archive), data);
     }
 };
 
