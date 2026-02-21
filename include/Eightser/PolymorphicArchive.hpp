@@ -65,7 +65,7 @@ private:
         }
     }
     template <class DerivedArchiveType, typename SerializableType,
-               EIGHTSER_REQUIRES(meta::is_oarchive<DerivedArchiveType>::value)>
+              EIGHTSER_REQUIRES(meta::is_oarchive<DerivedArchiveType>::value)>
     static void try_call_impl(ioarchive_t& archive, SerializableType& data)
     {
         ::xxeightser<SerializableType>::save(static_cast<DerivedArchiveType&>(archive), data);
