@@ -40,6 +40,7 @@ jobs:
         name: ${{ github.workflow }}
         path: |
           ${{ env.Eightser }}/Binaries
+          ${{ env.Eightser }}/Frameworks
 
     - name: "Test project"
       run: |
