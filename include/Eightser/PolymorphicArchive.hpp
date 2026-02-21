@@ -17,17 +17,18 @@ public:
     template <typename SerializableType>
     static void save(ioarchive_t& archive, SerializableType& data)
     {
-        call<::xxeightser_oarchive_registry>(archive, data);
+        call<::xxeightser_archive_registry, ::xxeightser_oarchive_registry_overload>(archive, data);
     }
 
     template <typename SerializableType>
     static void load(ioarchive_t& archive, SerializableType& data)
     {
-        call<::xxeightser_iarchive_registry>(archive, data);
+        call<::xxeightser_archive_registry, ::xxeightser_iarchive_registry_overload>(archive, data);
     }
 
 private:
-    template <template <::xxeightser_archive_traits_key_type> class ArchiveRegistryTemplate,
+    template <template <class, ::xxeightser_archive_traits_key_type> class ArchiveRegistryTemplate,
+              class ArchiveRegistryOverloadType,
               ::xxeightser_archive_traits_key_type ArchiveKeyValue = 0,
               typename SerializableType>
     static void call(ioarchive_t& archive, SerializableType& data)
@@ -38,12 +39,12 @@ private:
         }
         else
         {
-            using DerivedArchiveType = typename ArchiveRegistryTemplate<ArchiveKeyValue>::type;
+            using DerivedArchiveType = typename ArchiveRegistryTemplate<ArchiveRegistryOverloadType, ArchiveKeyValue>::type;
 
             if (::xxeightser_archive_traits<DerivedArchiveType>::key == archive.trait)
                 return try_call<DerivedArchiveType>(archive, data);
 
-            call<ArchiveRegistryTemplate, ArchiveKeyValue + 1>(archive, data);
+            call<ArchiveRegistryTemplate, ArchiveRegistryOverloadType, ArchiveKeyValue + 1>(archive, data);
         }
     }
 
@@ -64,33 +65,26 @@ private:
         }
     }
 
-    template <class DerivedArchiveType, typename SerializableType,
-              EIGHTSER_REQUIRES(meta::is_oarchive<DerivedArchiveType>::value)>
+    template <class DerivedArchiveType, typename SerializableType>
     static void try_call_impl(ioarchive_t& archive, SerializableType& data)
     {
-        ::xxeightser<SerializableType>::save(static_cast<DerivedArchiveType&>(archive), data);
-    }
-
-    template <class DerivedArchiveType, typename SerializableType,
-              EIGHTSER_REQUIRES(meta::is_iarchive<DerivedArchiveType>::value)>
-    static void try_call_impl(ioarchive_t& archive, SerializableType& data)
-    {
-        ::xxeightser<SerializableType>::load(static_cast<DerivedArchiveType&>(archive), data);
+        if constexpr (meta::is_oarchive<DerivedArchiveType>::value)
+        {
+            ::xxeightser<SerializableType>::save(static_cast<DerivedArchiveType&>(archive), data);
+        }
+        else if constexpr (meta::is_iarchive<DerivedArchiveType>::value)
+        {
+            ::xxeightser<SerializableType>::load(static_cast<DerivedArchiveType&>(archive), data);
+        }
+        else
+        {
+            static_assert(meta::to_false<DerivedArchiveType>(), "The read/write archive has not traits.");
+        }
     }
 };
 
 template <typename SerializableType,
-          EIGHTSER_REQUIRES(meta::is_unsupported<SerializableType>::value)>
-ioarchive_t& operator& (ioarchive_t& archive, SerializableType const&)
-{
-    static_assert(meta::to_false<SerializableType>(),
-        "The 'SerializableType' is an unsupported type for the 'eightser::ioarchive_t'.");
-
-    return archive;
-}
-
-template <typename SerializableType,
-          EIGHTSER_REQUIRES(std::negation<meta::is_unsupported<SerializableType>>::value)>
+          EIGHTSER_REQUIRES(std::negation_v<meta::is_unsupported<SerializableType>>)>
 ioarchive_t& operator<< (ioarchive_t& archive, SerializableType const& data)
 {
     polymorphic_archive_t::save(archive, const_cast<SerializableType&>(data));
@@ -98,18 +92,25 @@ ioarchive_t& operator<< (ioarchive_t& archive, SerializableType const& data)
 }
 
 template <typename SerializableType,
-          EIGHTSER_REQUIRES(std::negation<meta::is_unsupported<SerializableType>>::value)>
+          EIGHTSER_REQUIRES(std::negation_v<meta::is_unsupported<SerializableType>>)>
 ioarchive_t& operator>> (ioarchive_t& archive, SerializableType const& data)
 {
     polymorphic_archive_t::load(archive, const_cast<SerializableType&>(data));
     return archive;
 }
 
-template <typename SerializableType,
-          EIGHTSER_REQUIRES(std::negation<meta::is_unsupported<SerializableType>>::value)>
+template <typename SerializableType>
 ioarchive_t& operator& (ioarchive_t& archive, SerializableType const& data)
 {
-    return archive.readonly ? archive >> data : archive << data;
+    if constexpr (meta::is_unsupported<SerializableType>::value)
+    {
+        static_assert(meta::to_false<SerializableType>(), "The 'SerializableType' is an unsupported type for the 'eightser::ioarchive_t'.");
+        return archive;
+    }
+    else
+    {
+        return archive.saveload ? archive << data : archive >> data;
+    }
 }
 
 } // namespace eightser

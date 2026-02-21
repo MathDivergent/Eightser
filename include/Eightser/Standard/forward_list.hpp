@@ -12,8 +12,8 @@
 TEMPLATE_SERIALIZABLE_DECLARATION((template <typename ValueType, typename AllocatorType>), std::forward_list<ValueType, AllocatorType>)
 SERIALIZABLE_DECLARATION_INIT()
 
-TEMPLATE_SERIALIZABLE(save, forward_list, (template <typename ValueType, typename AllocatorType>), std::forward_list<ValueType, AllocatorType>)
-    SERIALIZATION
+TEMPLATE_SERIALIZABLE_SAVE(forward_list, (template <typename ValueType, typename AllocatorType>), std::forward_list<ValueType, AllocatorType>)
+    BIN_SERIALIZABLE
     (
         std::uint64_t size = std::distance(forward_list.begin(), forward_list.end());
         archive & size;
@@ -22,8 +22,8 @@ TEMPLATE_SERIALIZABLE(save, forward_list, (template <typename ValueType, typenam
     )
 SERIALIZABLE_INIT()
 
-TEMPLATE_SERIALIZABLE(load, forward_list, (template <typename ValueType, typename AllocatorType>), std::forward_list<ValueType, AllocatorType>)
-    SERIALIZATION
+TEMPLATE_SERIALIZABLE_LOAD(forward_list, (template <typename ValueType, typename AllocatorType>), std::forward_list<ValueType, AllocatorType>)
+    BIN_SERIALIZABLE
     (
         std::uint64_t size{};
         archive & size;

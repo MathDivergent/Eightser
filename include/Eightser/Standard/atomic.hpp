@@ -8,16 +8,16 @@
 TEMPLATE_SERIALIZABLE_DECLARATION(template <typename ValueType>, std::atomic<ValueType>)
 SERIALIZABLE_DECLARATION_INIT()
 
-TEMPLATE_SERIALIZABLE(save, atomic, template <typename ValueType>, std::atomic<ValueType>)
-    SERIALIZATION
+TEMPLATE_SERIALIZABLE_SAVE(atomic, template <typename ValueType>, std::atomic<ValueType>)
+    BIN_SERIALIZABLE
     (
         auto object = atomic.load();
         archive & object;
     )
 SERIALIZABLE_INIT()
 
-TEMPLATE_SERIALIZABLE(load, atomic, template <typename ValueType>, std::atomic<ValueType>)
-    SERIALIZATION
+TEMPLATE_SERIALIZABLE_LOAD(atomic, template <typename ValueType>, std::atomic<ValueType>)
+    BIN_SERIALIZABLE
     (
         ValueType value{};
         archive & value;

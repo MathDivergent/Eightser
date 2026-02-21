@@ -13,93 +13,76 @@
     template <typename, typename> friend struct ::xxeightser;
 
 #ifdef EIGHTSER_FULLY_ENABLE
-    #define SERIALIZATION(...) EIGHTSER_SERIALIZATION(bin, __VA_ARGS__)
-    #define SERIALIZATION_XML(...) EIGHTSER_SERIALIZATION(xml, __VA_ARGS__)
-    #define SERIALIZATION_JSON(...) EIGHTSER_SERIALIZATION(json, __VA_ARGS__)
+    #define BIN_SERIALIZABLE(...)  if (archive.type == ::eightser::bin) { __VA_ARGS__ return; }
+    #define XML_SERIALIZABLE(...)  if (archive.type == ::eightser::xml) { __VA_ARGS__ return; }
+    #define JSON_SERIALIZABLE(...)  if (archive.type == ::eightser::json) { __VA_ARGS__ return; }
 #else
-    #define SERIALIZATION(...) __VA_ARGS__
+    #define BIN_SERIALIZABLE(...) __VA_ARGS__
 #endif // EIGHTSER_MULTY_SERIALIZATION
 
 #define TEMPLATE_SERIALIZABLE_DECLARATION(object_template_header, ...) \
     EIGHTSER_DEPAREN(object_template_header) struct xxeightser<__VA_ARGS__> { \
         using S = __VA_ARGS__; \
         template <class ArchiveType> static void save(ArchiveType&, S&); \
-        template <class ArchiveType> static void load(ArchiveType&, S&);
+        template <class ArchiveType> static void load(ArchiveType&, S&); \
+        template <class ArchiveType> static void saveload(ArchiveType&, S&);
 
 #define CONDITIONAL_SERIALIZABLE_DECLARATION(...) \
-    template <typename S> struct xxeightser<S, typename std::enable_if<__VA_ARGS__>::type> { \
+    template <typename S> struct xxeightser<S, std::enable_if_t<__VA_ARGS__>> { \
         template <class ArchiveType> static void save(ArchiveType&, S&); \
-        template <class ArchiveType> static void load(ArchiveType&, S&);
+        template <class ArchiveType> static void load(ArchiveType&, S&); \
+        template <class ArchiveType> static void saveload(ArchiveType&, S&);
 
-#define SERIALIZABLE_DECLARATION(...) \
-    template <> struct xxeightser<__VA_ARGS__> { \
+#define VISIBLE_SERIALIZABLE_DECLARATION(module_api, ...) \
+    template <> struct EIGHTSER_DEPAREN(module_api) xxeightser<__VA_ARGS__> { \
         using S = __VA_ARGS__; \
         static void save(::eightser::ioarchive_t&, S&); \
-        static void load(::eightser::ioarchive_t&, S&);
+        static void load(::eightser::ioarchive_t&, S&); \
+        static void saveload(::eightser::ioarchive_t&, S&);
 
+#define SERIALIZABLE_DECLARATION(...) VISIBLE_SERIALIZABLE_DECLARATION((/*no module_api*/), __VA_ARGS__)
 
 #define SERIALIZABLE_DECLARATION_INIT(...) \
     };
 
 
-#define TEMPLATE_SERIALIZABLE(mode, object, object_template_header, ...) \
-     EIGHTSER_CONCAT(EIGHTSER_TEMPLATE_SERIALIZABLE_, mode)(object, object_template_header, __VA_ARGS__)
+#define TEMPLATE_SERIALIZABLE_SAVE(object, object_template_header, ...) \
+    EIGHTSER_DEPAREN(object_template_header) template <class ArchiveType> void xxeightser<__VA_ARGS__>::save(ArchiveType& archive, S& object) {
 
-#define CONDITIONAL_SERIALIZABLE(mode, object, ...) \
-    EIGHTSER_CONCAT(EIGHTSER_CONDITIONAL_SERIALIZABLE_, mode)(object, __VA_ARGS__)
+#define TEMPLATE_SERIALIZABLE_LOAD(object, object_template_header, ...) \
+    EIGHTSER_DEPAREN(object_template_header) template <class ArchiveType> void xxeightser<__VA_ARGS__>::load(ArchiveType& archive, S& object) {
 
-#define SERIALIZABLE(mode, object, ...) EIGHTSER_CONCAT(EIGHTSER_SERIALIZABLE_, mode)(object, __VA_ARGS__)
+#define TEMPLATE_SERIALIZABLE_SAVELOAD(object, object_template_header, ...) \
+    EIGHTSER_DEPAREN(object_template_header) template <class ArchiveType> void xxeightser<__VA_ARGS__>::save(ArchiveType& archive, S& object) { saveload(archive, object); } \
+    EIGHTSER_DEPAREN(object_template_header) template <class ArchiveType> void xxeightser<__VA_ARGS__>::load(ArchiveType& archive, S& object) { saveload(archive, object); } \
+    EIGHTSER_DEPAREN(object_template_header) template <class ArchiveType> void xxeightser<__VA_ARGS__>::saveload(ArchiveType& archive, S& object) {
+
+
+#define CONDITIONAL_SERIALIZABLE_SAVE(object, ...) \
+    template <typename S> template <class ArchiveType> void xxeightser<S, std::enable_if_t<__VA_ARGS__>>::save(ArchiveType& archive, S& object) {
+
+#define CONDITIONAL_SERIALIZABLE_LOAD(object, ...) \
+    template <typename S> template <class ArchiveType> void xxeightser<S, std::enable_if_t<__VA_ARGS__>>::load(ArchiveType& archive, S& object) {
+
+#define CONDITIONAL_SERIALIZABLE_SAVELOAD(object, ...) \
+    template <typename S> template <class ArchiveType> void xxeightser<S, std::enable_if_t<__VA_ARGS__>>::save(ArchiveType& archive, S& object) { saveload(archive, object); } \
+    template <typename S> template <class ArchiveType> void xxeightser<S, std::enable_if_t<__VA_ARGS__>>::load(ArchiveType& archive, S& object) { saveload(archive, object); } \
+    template <typename S> template <class ArchiveType> void xxeightser<S, std::enable_if_t<__VA_ARGS__>>::saveload(ArchiveType& archive, S& object) {
+
+
+#define SERIALIZABLE_SAVE(object, ...) \
+    void xxeightser<__VA_ARGS__>::save(::eightser::ioarchive_t& archive, S& object) {
+
+#define SERIALIZABLE_LOAD(object, ...) \
+    void xxeightser<__VA_ARGS__>::load(::eightser::ioarchive_t& archive, S& object) {
+
+#define SERIALIZABLE_SAVELOAD(object, ...) \
+    void xxeightser<__VA_ARGS__>::save(::eightser::ioarchive_t& archive, S& object) { saveload(archive, object); } \
+    void xxeightser<__VA_ARGS__>::load(::eightser::ioarchive_t& archive, S& object) { saveload(archive, object); } \
+    void xxeightser<__VA_ARGS__>::saveload(::eightser::ioarchive_t& archive, S& object) {
 
 #define SERIALIZABLE_INIT(...) \
     }
-
-
-// impl
-#ifdef EIGHTSER_FULLY_ENABLE
-    #define EIGHTSER_SERIALIZATION(archive_type, ...) if (archive.type == ::eightser::archive_type) { __VA_ARGS__ return; }
-#endif // EIGHTSER_FULLY_ENABLE
-
-#define EIGHTSER_TEMPLATE_SERIALIZABLE(mode, object, object_template_header, ...) \
-    EIGHTSER_DEPAREN(object_template_header) \
-    template <class ArchiveType> void xxeightser<__VA_ARGS__>::mode(ArchiveType& archive, S& object) {
-
-#define EIGHTSER_TEMPLATE_SERIALIZABLE_save(object, object_template_header, ...) \
-    EIGHTSER_TEMPLATE_SERIALIZABLE(save, object, object_template_header, __VA_ARGS__)
-
-#define EIGHTSER_TEMPLATE_SERIALIZABLE_load(object, object_template_header, ...) \
-    EIGHTSER_TEMPLATE_SERIALIZABLE(load, object, object_template_header, __VA_ARGS__)
-
-#define EIGHTSER_TEMPLATE_SERIALIZABLE_saveload(object, object_template_header, ...) \
-    EIGHTSER_TEMPLATE_SERIALIZABLE_save(object, object_template_header, __VA_ARGS__) \
-        SERIALIZATION(load(archive, object);) \
-    SERIALIZABLE_INIT() \
-    EIGHTSER_TEMPLATE_SERIALIZABLE_load(object, object_template_header, __VA_ARGS__)
-
-#define EIGHTSER_CONDITIONAL_SERIALIZABLE(mode, object, ...) \
-    template <typename S> \
-    template <class ArchiveType> void xxeightser<S, typename std::enable_if<__VA_ARGS__>::type>::mode(ArchiveType& archive, S& object) {
-
-#define EIGHTSER_CONDITIONAL_SERIALIZABLE_save(object, ...) EIGHTSER_CONDITIONAL_SERIALIZABLE(save, object, __VA_ARGS__)
-#define EIGHTSER_CONDITIONAL_SERIALIZABLE_load(object, ...) EIGHTSER_CONDITIONAL_SERIALIZABLE(load, object, __VA_ARGS__)
-
-#define EIGHTSER_CONDITIONAL_SERIALIZABLE_saveload(object, ...) \
-    EIGHTSER_CONDITIONAL_SERIALIZABLE_save(object, __VA_ARGS__) \
-        SERIALIZATION(load(archive, object);) \
-    SERIALIZABLE_INIT() \
-    EIGHTSER_CONDITIONAL_SERIALIZABLE_load(object, __VA_ARGS__) \
-
-#define EIGHTSER_SERIALIZABLE(mode, object, ...) \
-    void xxeightser<__VA_ARGS__>::mode(::eightser::ioarchive_t& archive, S& object) {
-
-#define EIGHTSER_SERIALIZABLE_save(object, ...) EIGHTSER_SERIALIZABLE(save, object, __VA_ARGS__)
-#define EIGHTSER_SERIALIZABLE_load(object, ...) EIGHTSER_SERIALIZABLE(load, object, __VA_ARGS__)
-
-#define EIGHTSER_SERIALIZABLE_saveload(object, ...) \
-    EIGHTSER_SERIALIZABLE_save(object, __VA_ARGS__) \
-        SERIALIZATION(load(archive, object);) \
-    SERIALIZABLE_INIT() \
-    EIGHTSER_SERIALIZABLE_load(object, __VA_ARGS__)
-// ~impl
 
 struct xxeightser_cast_to_non_public_base
 {
@@ -116,8 +99,7 @@ namespace eightser
 // Type registry for instantiable & any serialization, allowed registered and supported types only
 template <typename SerializableType> void serializable()
 {
-    static_assert(std::negation<meta::is_unsupported<SerializableType>>::value,
-        "The 'SerializableType' is an unsupported type for serialization.");
+    static_assert(std::negation_v<meta::is_unsupported<SerializableType>>, "The 'SerializableType' is an unsupported type for serialization.");
 
     instantiable_registry()->add<SerializableType>();
 
@@ -130,7 +112,7 @@ template <typename SerializableType> void serializable()
 
 template <typename SerializableType> SerializableType&& serializable(SerializableType&& object)
 {
-    serializable<typename std::decay<SerializableType>::type>();
+    serializable<std::decay_t<SerializableType>>();
     return std::forward<SerializableType>(object);
 }
 

@@ -30,8 +30,8 @@ struct Box
 SERIALIZABLE_DECLARATION(Vector)
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, Vector)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, Vector)
+    BIN_SERIALIZABLE
     (
         archive & self.X & self.Y & self.Z;
     )
@@ -40,8 +40,8 @@ SERIALIZABLE_INIT()
 SERIALIZABLE_DECLARATION(Box)
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, Box)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, Box)
+    BIN_SERIALIZABLE
     (
         archive & self.Min & self.Max;
     )
@@ -101,8 +101,8 @@ struct Printer : Product
 SERIALIZABLE_DECLARATION(Product)
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, Product)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, Product)
+    BIN_SERIALIZABLE
     (
         archive & self.name & self.series & self.price;
     )
@@ -111,8 +111,8 @@ SERIALIZABLE_INIT()
 SERIALIZABLE_DECLARATION(Printer)
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, Printer)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, Printer)
+    BIN_SERIALIZABLE
     (
         archive & hierarchy<Product>(self);
         #ifdef EIGHTSER_RTTI_ENABLE

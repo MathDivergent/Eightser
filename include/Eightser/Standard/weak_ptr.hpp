@@ -12,16 +12,16 @@
 TEMPLATE_SERIALIZABLE_DECLARATION(template <typename ElementType>, std::weak_ptr<ElementType>)
 SERIALIZABLE_DECLARATION_INIT()
 
-TEMPLATE_SERIALIZABLE(save, weak_ptr, template <typename ElementType>, std::weak_ptr<ElementType>)
-    SERIALIZATION
+TEMPLATE_SERIALIZABLE_SAVE(weak_ptr, template <typename ElementType>, std::weak_ptr<ElementType>)
+    BIN_SERIALIZABLE
     (
         auto sptr = weak_ptr.lock();
         archive & sptr;
     )
 SERIALIZABLE_INIT()
 
-TEMPLATE_SERIALIZABLE(load, weak_ptr, template <typename ElementType>, std::weak_ptr<ElementType>)
-    SERIALIZATION
+TEMPLATE_SERIALIZABLE_LOAD(weak_ptr, template <typename ElementType>, std::weak_ptr<ElementType>)
+    BIN_SERIALIZABLE
     (
         std::shared_ptr<ElementType> sptr;
         archive & sptr;

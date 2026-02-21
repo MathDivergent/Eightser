@@ -9,16 +9,16 @@
 TEMPLATE_SERIALIZABLE_DECLARATION((template <typename ElementType, typename DeleterType>), std::unique_ptr<ElementType, DeleterType>)
 SERIALIZABLE_DECLARATION_INIT()
 
-TEMPLATE_SERIALIZABLE(save, unique_ptr, (template <typename ElementType, typename DeleterType>), std::unique_ptr<ElementType, DeleterType>)
-    SERIALIZATION
+TEMPLATE_SERIALIZABLE_SAVE(unique_ptr, (template <typename ElementType, typename DeleterType>), std::unique_ptr<ElementType, DeleterType>)
+    BIN_SERIALIZABLE
     (
         auto data = unique_ptr.get();
         archive & data;
     )
 SERIALIZABLE_INIT()
 
-TEMPLATE_SERIALIZABLE(load, unique_ptr, (template <typename ElementType, typename DeleterType>), std::unique_ptr<ElementType, DeleterType>)
-    SERIALIZATION
+TEMPLATE_SERIALIZABLE_LOAD(unique_ptr, (template <typename ElementType, typename DeleterType>), std::unique_ptr<ElementType, DeleterType>)
+    BIN_SERIALIZABLE
     (
         ElementType* data = nullptr;
         archive & data;

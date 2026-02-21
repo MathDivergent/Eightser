@@ -67,8 +67,8 @@ void native_assign(ArchiveType& archive, PointerType& pointer, PointerHoldType& 
 } // namespace detail
 
 template <class ArchiveType, typename PointerType,
-          EIGHTSER_REQUIRES(std::conjunction<meta::is_oarchive<ArchiveType>,
-                                             meta::is_pointer_to_any<PointerType>>::value)>
+          EIGHTSER_REQUIRES(std::conjunction_v<meta::is_oarchive<ArchiveType>,
+                                               meta::is_pointer_to_any<PointerType>>)>
 void strict(ArchiveType& archive, PointerType& pointer)
 {
     if (pointer == nullptr)
@@ -91,8 +91,8 @@ void strict(ArchiveType& archive, PointerType& pointer)
 }
 
 template <class ArchiveType, typename PointerType, typename PointerHoldType,
-          EIGHTSER_REQUIRES(std::conjunction<meta::is_iarchive<ArchiveType>,
-                                             meta::is_pointer_to_any<PointerType>>::value)>
+          EIGHTSER_REQUIRES(std::conjunction_v<meta::is_iarchive<ArchiveType>,
+                                               meta::is_pointer_to_any<PointerType>>)>
 void strict(ArchiveType& archive, PointerType& pointer, PointerHoldType& cache)
 {
     #ifdef EIGHTSER_GARBAGE_CHECK_ENABLE
@@ -119,8 +119,8 @@ void strict(ArchiveType& archive, PointerType& pointer, PointerHoldType& cache)
 }
 
 template <class ArchiveType, typename PointerType,
-          EIGHTSER_REQUIRES(std::conjunction<meta::is_oarchive<ArchiveType>,
-                                             meta::is_pointer_to_any<PointerType>>::value)>
+          EIGHTSER_REQUIRES(std::conjunction_v<meta::is_oarchive<ArchiveType>,
+                                               meta::is_pointer_to_any<PointerType>>)>
 void track(ArchiveType& archive, PointerType& pointer)
 {
     // need to overload tracking
@@ -143,8 +143,8 @@ void track(ArchiveType& archive, PointerType& pointer)
 }
 
 template <class ArchiveType, typename SerializableType,
-          EIGHTSER_REQUIRES(std::conjunction<meta::is_oarchive<ArchiveType>,
-                                             std::negation<meta::is_pointer_to_any<SerializableType>>>::value)>
+          EIGHTSER_REQUIRES(std::conjunction_v<meta::is_oarchive<ArchiveType>,
+                                               std::negation<meta::is_pointer_to_any<SerializableType>>>)>
 void track(ArchiveType& archive, SerializableType& data)
 {
     using pointer_hold_type = INSTANTIABLE_TYPE*; // need to overload tracking
@@ -165,8 +165,8 @@ void track(ArchiveType& archive, SerializableType& data)
 }
 
 template <class ArchiveType, typename PointerType,
-          EIGHTSER_REQUIRES(std::conjunction<meta::is_iarchive<ArchiveType>,
-                                             meta::is_pointer_to_any<PointerType>>::value)>
+          EIGHTSER_REQUIRES(std::conjunction_v<meta::is_iarchive<ArchiveType>,
+                                               meta::is_pointer_to_any<PointerType>>)>
 void track(ArchiveType& archive, PointerType& pointer)
 {
     // need to overload tracking
@@ -193,8 +193,8 @@ void track(ArchiveType& archive, PointerType& pointer)
 }
 
 template <class ArchiveType, typename SerializableType,
-          EIGHTSER_REQUIRES(std::conjunction<meta::is_iarchive<ArchiveType>,
-                                             std::negation<meta::is_pointer_to_any<SerializableType>>>::value)>
+          EIGHTSER_REQUIRES(std::conjunction_v<meta::is_iarchive<ArchiveType>,
+                                               std::negation<meta::is_pointer_to_any<SerializableType>>>)>
 void track(ArchiveType& archive, SerializableType& data)
 {
     using pointer_hold_type = INSTANTIABLE_TYPE*; // need to overload tracking
@@ -213,8 +213,7 @@ void track(ArchiveType& archive, SerializableType& data)
 }
 
 template <class ArchiveType, typename PointerType,
-          EIGHTSER_REQUIRES(std::conjunction<meta::is_ioarchive<PointerType>,
-                                             meta::is_pointer_to_any<PointerType>>::value)>
+          EIGHTSER_REQUIRES(meta::is_pointer_to_any<PointerType>::value)>
 void raw(ArchiveType& archive, PointerType& pointer)
 {
     if (detail::tracking_key(archive, pointer)) // serialize refer info

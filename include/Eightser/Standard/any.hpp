@@ -11,7 +11,7 @@
 #include <Eightser/Standard/AnyRegistry.hpp>
 
 // please, use 'eightser::serializable' for type any registry before std::any serialization
-SERIALIZABLE_DECLARATION(std::any)
+VISIBLE_SERIALIZABLE_DECLARATION((EIGHTSER_API), std::any)
 SERIALIZABLE_DECLARATION_INIT()
 
 #endif // EIGHTSER_ANY_SUPPORT_ENABLE

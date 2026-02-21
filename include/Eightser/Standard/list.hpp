@@ -12,8 +12,8 @@
 TEMPLATE_SERIALIZABLE_DECLARATION((template <typename ValueType, typename AllocatorType>), std::list<ValueType, AllocatorType>)
 SERIALIZABLE_DECLARATION_INIT()
 
-TEMPLATE_SERIALIZABLE(save, list, (template <typename ValueType, typename AllocatorType>), std::list<ValueType, AllocatorType>)
-    SERIALIZATION
+TEMPLATE_SERIALIZABLE_SAVE(list, (template <typename ValueType, typename AllocatorType>), std::list<ValueType, AllocatorType>)
+    BIN_SERIALIZABLE
     (
         std::uint64_t size = list.size();
         archive & size;
@@ -22,8 +22,8 @@ TEMPLATE_SERIALIZABLE(save, list, (template <typename ValueType, typename Alloca
     )
 SERIALIZABLE_INIT()
 
-TEMPLATE_SERIALIZABLE(load, list, (template <typename ValueType, typename AllocatorType>), std::list<ValueType, AllocatorType>)
-    SERIALIZATION
+TEMPLATE_SERIALIZABLE_LOAD(list, (template <typename ValueType, typename AllocatorType>), std::list<ValueType, AllocatorType>)
+    BIN_SERIALIZABLE
     (
         std::uint64_t size{};
         archive & size;

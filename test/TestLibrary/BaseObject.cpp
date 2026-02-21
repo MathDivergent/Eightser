@@ -2,15 +2,15 @@
 
 #include <Eightser/Standard/string.hpp>
 
-SERIALIZABLE(save, self, BaseObject)
-    SERIALIZATION
+SERIALIZABLE_SAVE(self, BaseObject)
+    BIN_SERIALIZABLE
     (
         archive << self.id << self.name;
     )
 SERIALIZABLE_INIT()
 
-SERIALIZABLE(load, self, BaseObject)
-    SERIALIZATION
+SERIALIZABLE_LOAD(self, BaseObject)
+    BIN_SERIALIZABLE
     (
         archive >> self.id >> self.name;
     )

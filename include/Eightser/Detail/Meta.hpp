@@ -47,7 +47,7 @@ struct is_static_castable : std::false_type {};
 template <typename FromType, typename ToType>
 struct is_static_castable<FromType, ToType, std::void_t<decltype( static_cast<ToType>(std::declval<FromType>()) )>> : std::true_type {};
 
-template <typename PointerType, bool = std::is_pointer<PointerType>::value>
+template <typename PointerType, bool = std::is_pointer_v<PointerType>>
 struct pointer_count
 {
     static constexpr auto value = pointer_count<typename remove_pointer<PointerType>::type>::value + 1;
@@ -89,13 +89,13 @@ template <typename, typename enable = void>
 struct value { using type = dummy_t; };
 
 template <class SerializableObjectType>
-struct value<SerializableObjectType, typename std::enable_if<std::is_class<SerializableObjectType>::value>::type>
+struct value<SerializableObjectType, std::enable_if_t<std::is_class_v<SerializableObjectType>>>
 {
     using type = typename object_value<SerializableObjectType>::type;
 };
 
 template <typename SerializableArrayType>
-struct value<SerializableArrayType, typename std::enable_if<std::is_array<SerializableArrayType>::value>::type>
+struct value<SerializableArrayType, std::enable_if_t<std::is_array_v<SerializableArrayType>>>
 {
     using type = typename array_value<SerializableArrayType>::type;
 };

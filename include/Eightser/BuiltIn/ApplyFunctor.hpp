@@ -25,11 +25,11 @@ template <typename ApplyFunctorType> struct is_apply_functor : std::is_base_of<a
 
 } // namespace eightser
 
-CONDITIONAL_SERIALIZABLE_DECLARATION(::eightser::meta::is_apply_functor<typename std::decay<S>::type>::value)
+CONDITIONAL_SERIALIZABLE_DECLARATION(::eightser::meta::is_apply_functor<std::decay_t<S>>::value)
 SERIALIZABLE_DECLARATION_INIT()
 
-CONDITIONAL_SERIALIZABLE(saveload, apply_functor, ::eightser::meta::is_apply_functor<typename std::decay<S>::type>::value)
-    SERIALIZATION
+CONDITIONAL_SERIALIZABLE_SAVELOAD(apply_functor, ::eightser::meta::is_apply_functor<std::decay_t<S>>::value)
+    BIN_SERIALIZABLE
     (
         apply_functor(archive);
     )

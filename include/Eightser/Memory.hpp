@@ -38,14 +38,14 @@ template <typename PointerType> struct is_pointer_to_any
 
 template <typename PointerType, bool = is_pointer_to_any<PointerType>::value>
 struct is_pointer_to_polymorphic
-    : std::integral_constant<bool, std::is_polymorphic<typename memory::pointer_traits<PointerType>::element_type>::value> {};
+    : std::integral_constant<bool, std::is_polymorphic_v<typename memory::pointer_traits<PointerType>::element_type>> {};
 
 template <typename PointerType>
 struct is_pointer_to_polymorphic<PointerType, false> : std::false_type {};
 
 template <typename PointerType, bool = is_pointer_to_any<PointerType>::value>
 struct is_pointer_to_standard_layout
-    : std::integral_constant<bool, not std::is_polymorphic<typename memory::pointer_traits<PointerType>::element_type>::value> {};
+    : std::integral_constant<bool, not std::is_polymorphic_v<typename memory::pointer_traits<PointerType>::element_type>> {};
 
 template <typename PointerType>
 struct is_pointer_to_standard_layout<PointerType, false> : std::false_type {};
@@ -71,18 +71,17 @@ ToType* dynamic_pointer_cast(SerializableType* pointer)
     return dynamic_cast<ToType*>(pointer);
 }
 
-template <typename ToType, typename FromType,
-          EIGHTSER_REQUIRES(std::negation<meta::is_static_castable<FromType*, ToType*>>::value)>
-ToType* static_pointer_cast(FromType*) noexcept
-{
-    return nullptr;
-}
-
-template <typename ToType, typename FromType,
-          EIGHTSER_REQUIRES(meta::is_static_castable<FromType*, ToType*>::value)>
+template <typename ToType, typename FromType>
 ToType* static_pointer_cast(FromType* pointer) noexcept
 {
-    return static_cast<ToType*>(pointer);
+    if constexpr (meta::is_static_castable<FromType*, ToType*>::value)
+    {
+        return static_cast<ToType*>(pointer);
+    }
+    else
+    {
+        return nullptr;
+    }
 }
 
 template <typename SerializableType>
@@ -91,18 +90,17 @@ SerializableType* raw(SerializableType* pointer)
     return pointer;
 }
 
-template <typename SerializableType,
-          EIGHTSER_REQUIRES(std::negation<std::is_abstract<SerializableType>>::value)>
+template <typename SerializableType>
 void allocate(SerializableType*& pointer)
 {
-    pointer = new SerializableType;
-}
-
-template <typename SerializableType,
-          EIGHTSER_REQUIRES(std::is_abstract<SerializableType>::value)>
-void allocate(SerializableType*& pointer)
-{
-    pointer = nullptr;
+    if constexpr (std::is_abstract_v<SerializableType>)
+    {
+        pointer = nullptr;
+    }
+    else
+    {
+        pointer = new SerializableType;
+    }
 }
 
 } // namespace memory
@@ -127,18 +125,17 @@ std::shared_ptr<ToType> dynamic_pointer_cast(std::shared_ptr<FromType> const& po
     return std::dynamic_pointer_cast<ToType>(pointer);
 }
 
-template <typename ToType, typename FromType,
-          EIGHTSER_REQUIRES(std::negation<meta::is_static_castable<FromType*, ToType*>>::value)>
-std::shared_ptr<ToType> static_pointer_cast(std::shared_ptr<FromType> const&) noexcept
-{
-    return nullptr;
-}
-
-template <typename ToType, typename FromType,
-          EIGHTSER_REQUIRES(meta::is_static_castable<FromType*, ToType*>::value)>
+template <typename ToType, typename FromType>
 std::shared_ptr<ToType> static_pointer_cast(std::shared_ptr<FromType> const& pointer) noexcept
 {
-    return std::static_pointer_cast<ToType>(pointer);
+    if constexpr (meta::is_static_castable<FromType*, ToType*>::value)
+    {
+        return std::static_pointer_cast<ToType>(pointer);
+    }
+    else
+    {
+        return nullptr;
+    }
 }
 
 template <typename SerializableType>
@@ -147,18 +144,17 @@ SerializableType* raw(std::shared_ptr<SerializableType> const& pointer)
     return pointer.get();
 }
 
-template <typename SerializableType,
-          EIGHTSER_REQUIRES(std::negation<std::is_abstract<SerializableType>>::value)>
+template <typename SerializableType>
 void allocate(std::shared_ptr<SerializableType>& pointer)
 {
-    pointer = std::make_shared<SerializableType>();
-}
-
-template <typename SerializableType,
-          EIGHTSER_REQUIRES(std::is_abstract<SerializableType>::value)>
-void allocate(std::shared_ptr<SerializableType>& pointer)
-{
-    pointer = nullptr;
+    if constexpr (std::is_abstract_v<SerializableType>)
+    {
+        pointer = nullptr;
+    }
+    else
+    {
+        pointer = std::make_shared<SerializableType>();
+    }
 }
 
 } // namespace memory

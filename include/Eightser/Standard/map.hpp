@@ -37,32 +37,11 @@ template <class StdMapType> struct xxeightser_is_std_any_map
                        ::xxeightser_is_std_multimap<StdMapType>,
                        ::xxeightser_is_std_any_unordered_map<StdMapType>> {};
 
-namespace eightser
-{
-
-namespace detail
-{
-
-template <class StdMapType,
-          EIGHTSER_REQUIRES(std::negation<::xxeightser_is_std_any_unordered_map<StdMapType>>::value)>
-void reserve_unordered(StdMapType&, std::size_t) noexcept { /*pass*/ }
-
-template <class StdMapType,
-          EIGHTSER_REQUIRES(::xxeightser_is_std_any_unordered_map<StdMapType>::value)>
-void reserve_unordered(StdMapType& unordered, std::size_t size)
-{
-    unordered.reserve(size);
-}
-
-} // namespace detail
-
-} // namespace eightser
-
 CONDITIONAL_SERIALIZABLE_DECLARATION(::xxeightser_is_std_any_map<S>::value)
 SERIALIZABLE_DECLARATION_INIT()
 
-CONDITIONAL_SERIALIZABLE(save, map, ::xxeightser_is_std_any_map<S>::value)
-    SERIALIZATION
+CONDITIONAL_SERIALIZABLE_SAVE(map, ::xxeightser_is_std_any_map<S>::value)
+    BIN_SERIALIZABLE
     (
         std::uint64_t size = map.size();
         archive & size;
@@ -71,14 +50,17 @@ CONDITIONAL_SERIALIZABLE(save, map, ::xxeightser_is_std_any_map<S>::value)
     )
 SERIALIZABLE_INIT()
 
-CONDITIONAL_SERIALIZABLE(load, map, ::xxeightser_is_std_any_map<S>::value)
-    SERIALIZATION
+CONDITIONAL_SERIALIZABLE_LOAD(map, ::xxeightser_is_std_any_map<S>::value)
+    BIN_SERIALIZABLE
     (
         std::uint64_t size{};
         archive & size;
 
         map.clear();
-        ::eightser::detail::reserve_unordered(map, size);
+        if constexpr (::xxeightser_is_std_any_unordered_map<S>::value)
+        {
+            map.reserve(size);
+        }
 
         auto hint = map.begin();
         for (std::uint64_t i = 0; i < size; ++i)

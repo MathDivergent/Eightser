@@ -73,7 +73,7 @@ private:
 
 public:
     template <typename SizeType, typename... SizeTypes,
-              EIGHTSER_REQUIRES(std::negation<std::is_array<SizeType>>::value)>
+              EIGHTSER_REQUIRES(std::negation_v<std::is_array<SizeType>>)>
     span_t(pointer& data, SizeType dimension, SizeTypes... dimensions) noexcept
         : BaseSpanType(data, dimension, dimensions...), xxchild_scope(data[0], dimensions...) {}
 
@@ -134,12 +134,12 @@ namespace utility
 
 template <typename PointerType, typename SizeType, typename... SizeTypes,
           std::size_t DimensionNumberValue = sizeof...(SizeTypes) + 1,
-          typename Type = typename meta::remove_pointer<PointerType, DimensionNumberValue>::type,
           EIGHTSER_REQUIRES(meta::is_span_set<PointerType, SizeType, SizeTypes...>::value)>
-span_t<Type, DimensionNumberValue> make_span(PointerType& data, SizeType dimension, SizeTypes... dimensions)
+auto make_span(PointerType& data, SizeType dimension, SizeTypes... dimensions)
 {
-    using size_type = typename span_t<Type, DimensionNumberValue>::size_type;
-    return { data, static_cast<size_type>(dimension), static_cast<size_type>(dimensions)... };
+    using return_type = span_t<typename meta::remove_pointer<PointerType, DimensionNumberValue>::type, DimensionNumberValue>;
+    using size_type = typename return_type::size_type;
+    return return_type(data, static_cast<size_type>(dimension), static_cast<size_type>(dimensions)...);
 }
 
 } // namespace utility
@@ -148,8 +148,7 @@ namespace detail
 {
 
 template <class ArchiveType, typename SpanType,
-          EIGHTSER_REQUIRES(std::conjunction<meta::is_ioarchive<ArchiveType>,
-                                       std::negation<meta::is_span<SpanType>>>::value)>
+          EIGHTSER_REQUIRES(std::negation_v<meta::is_span<SpanType>>)>
 void span_impl(ArchiveType& archive, SpanType& data)
 {
     archive & data;
@@ -157,8 +156,8 @@ void span_impl(ArchiveType& archive, SpanType& data)
 
 // serialization of scoped data with previous dimension initialization
 template <class ArchiveType, typename SpanType,
-          EIGHTSER_REQUIRES(std::conjunction<meta::is_oarchive<ArchiveType>,
-                                       meta::is_span<SpanType>>::value)>
+          EIGHTSER_REQUIRES(std::conjunction_v<meta::is_oarchive<ArchiveType>,
+                                               meta::is_span<SpanType>>)>
 void span_impl(ArchiveType& archive, SpanType& array)
 {
     using size_type = typename SpanType::size_type;
@@ -168,8 +167,8 @@ void span_impl(ArchiveType& archive, SpanType& array)
 }
 
 template <class ArchiveType, typename SpanType,
-          EIGHTSER_REQUIRES(std::conjunction<meta::is_iarchive<ArchiveType>,
-                                       meta::is_span<SpanType>>::value)>
+          EIGHTSER_REQUIRES(std::conjunction_v<meta::is_iarchive<ArchiveType>,
+                                               meta::is_span<SpanType>>)>
 void span_impl(ArchiveType& archive, SpanType& array)
 {
     using size_type = typename SpanType::size_type;
@@ -190,8 +189,7 @@ inline namespace common
 
 template <class ArchiveType, typename PointerType,
           typename SizeType, typename... SizeTypes,
-          EIGHTSER_REQUIRES(std::conjunction<meta::is_ioarchive<ArchiveType>,
-                                       meta::is_span_set<PointerType, SizeType, SizeTypes...>>::value)>
+          EIGHTSER_REQUIRES(meta::is_span_set<PointerType, SizeType, SizeTypes...>::value)>
 void span(ArchiveType& archive, PointerType& pointer, SizeType& dimension, SizeTypes&... dimensions)
 {
     if (not detail::tracking_key(archive, pointer)) return; // serialize refer info
@@ -219,7 +217,7 @@ struct span_functor_t : apply_functor_t
     template <class ArchiveType>
     void operator() (ArchiveType& archive) const
     {
-        invoke(archive, std::make_index_sequence<std::tuple_size<PackType>::value>{});
+        invoke(archive, std::make_index_sequence<std::tuple_size_v<PackType>>{});
     }
 
 private:

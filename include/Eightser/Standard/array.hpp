@@ -10,8 +10,8 @@
 TEMPLATE_SERIALIZABLE_DECLARATION((template <typename ValueType, std::size_t SizeValue>), std::array<ValueType, SizeValue>)
 SERIALIZABLE_DECLARATION_INIT()
 
-TEMPLATE_SERIALIZABLE(saveload, array, (template <typename ValueType, std::size_t SizeValue>), std::array<ValueType, SizeValue>)
-    SERIALIZATION
+TEMPLATE_SERIALIZABLE_SAVELOAD(array, (template <typename ValueType, std::size_t SizeValue>), std::array<ValueType, SizeValue>)
+    BIN_SERIALIZABLE
     (
         ::eightser::compress::zip(archive, array);
     )

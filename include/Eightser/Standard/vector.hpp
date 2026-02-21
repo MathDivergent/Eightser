@@ -12,8 +12,8 @@
 TEMPLATE_SERIALIZABLE_DECLARATION((template <typename ValueType, typename AllocatorType>), std::vector<ValueType, AllocatorType>)
 SERIALIZABLE_DECLARATION_INIT()
 
-TEMPLATE_SERIALIZABLE(save, vector, (template <typename ValueType, typename AllocatorType>), std::vector<ValueType, AllocatorType>)
-    SERIALIZATION
+TEMPLATE_SERIALIZABLE_SAVE(vector, (template <typename ValueType, typename AllocatorType>), std::vector<ValueType, AllocatorType>)
+    BIN_SERIALIZABLE
     (
         std::uint64_t size = vector.size();
         archive & size;
@@ -22,8 +22,8 @@ TEMPLATE_SERIALIZABLE(save, vector, (template <typename ValueType, typename Allo
     )
 SERIALIZABLE_INIT()
 
-TEMPLATE_SERIALIZABLE(load, vector, (template <typename ValueType, typename AllocatorType>), std::vector<ValueType, AllocatorType>)
-    SERIALIZATION
+TEMPLATE_SERIALIZABLE_LOAD(vector, (template <typename ValueType, typename AllocatorType>), std::vector<ValueType, AllocatorType>)
+    BIN_SERIALIZABLE
     (
         std::uint64_t size{};
         archive & size;
@@ -34,7 +34,7 @@ TEMPLATE_SERIALIZABLE(load, vector, (template <typename ValueType, typename Allo
 SERIALIZABLE_INIT()
 
 
-SERIALIZABLE_DECLARATION(std::vector<bool>)
+VISIBLE_SERIALIZABLE_DECLARATION((EIGHTSER_API), std::vector<bool>)
 SERIALIZABLE_DECLARATION_INIT()
 
 #endif // EIGHTSER_STANDARD_VECTOR_HPP

@@ -8,8 +8,8 @@
 TEMPLATE_SERIALIZABLE_DECLARATION(template <typename ValueType>, std::complex<ValueType>)
 SERIALIZABLE_DECLARATION_INIT()
 
-TEMPLATE_SERIALIZABLE(save, complex, template <typename ValueType>, std::complex<ValueType>)
-    SERIALIZATION
+TEMPLATE_SERIALIZABLE_SAVE(complex, template <typename ValueType>, std::complex<ValueType>)
+    BIN_SERIALIZABLE
     (
         auto re = complex.real();
         auto im = complex.imag();
@@ -18,8 +18,8 @@ TEMPLATE_SERIALIZABLE(save, complex, template <typename ValueType>, std::complex
     )
 SERIALIZABLE_INIT()
 
-TEMPLATE_SERIALIZABLE(load, complex, template <typename ValueType>, std::complex<ValueType>)
-    SERIALIZATION
+TEMPLATE_SERIALIZABLE_LOAD(complex, template <typename ValueType>, std::complex<ValueType>)
+    BIN_SERIALIZABLE
     (
         ValueType re{};
         ValueType im{};
