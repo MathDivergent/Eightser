@@ -252,13 +252,12 @@ TEST(TestLibrary, TestExportInstantiable)
 }
 
 #include <Eightser/Standard/string.hpp>
-#include <Eightser/Memory.hpp>
 
 TEST(TestLibrary, TestStreamWrapper)
 {
     static std::string s_s = "Hello, World!";
 
-    std::vector<unsigned char> storage;
+    std::vector<char> storage;  // note: SERIALIZABLE_ARCHIVE_DECLARATION not provided for test only
     {
         std::string s = s_s;
 
@@ -286,7 +285,7 @@ TEST(TestLibrary, TestStreamWrapper)
 
         // if we use unsigned char - we should use reinterpret_cast to const char
         // or 'eightser::memory::const_byte_cast' function
-        file.write(eightser::memory::const_byte_cast(storage.data()), storage.size());
+        file.write(storage.data(), storage.size());
 
         // will close in destructor
         // file.close();
