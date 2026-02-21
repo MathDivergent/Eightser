@@ -141,12 +141,15 @@ public:
 
 } // namespace eightser
 
-extern template class EIGHTSER_API ::eightser::wrapper::ibyte_stream_t<>;
+extern template class EIGHTSER_API ::eightser::wrapper::ibyte_stream_t<std::vector<unsigned char>, false /*EndianSwap*/>;
+extern template class EIGHTSER_API ::eightser::wrapper::ibyte_stream_t<std::vector<unsigned char>, true /*EndianSwap*/>;
 #ifdef EIGHTSER_FILESTREAM_ENABLE
 extern template class EIGHTSER_API ::eightser::wrapper::ifile_stream_t<>;
 #endif // EIGHTSER_FILESTREAM_ENABLE
 
-extern template class EIGHTSER_API ::eightser::wrapper::obyte_stream_t<>;
+
+extern template class EIGHTSER_API ::eightser::wrapper::obyte_stream_t<std::vector<unsigned char>, false /*EndianSwap*/>;
+extern template class EIGHTSER_API ::eightser::wrapper::obyte_stream_t<std::vector<unsigned char>, true /*EndianSwap*/>;
 #ifdef EIGHTSER_FILESTREAM_ENABLE
 extern template class EIGHTSER_API ::eightser::wrapper::ofile_stream_t<>;
 #endif // EIGHTSER_FILESTREAM_ENABLE
