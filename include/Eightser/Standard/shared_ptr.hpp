@@ -10,8 +10,11 @@
 TEMPLATE_SERIALIZABLE_DECLARATION(template <typename ElementType>, std::shared_ptr<ElementType>)
 SERIALIZABLE_DECLARATION_INIT()
 
-TEMPLATE_SERIALIZABLE(saveload, shared_ptr, template <typename ElementType>, std::shared_ptr<ElementType>)
-    ::eightser::track(archive, shared_ptr);
+TEMPLATE_SERIALIZABLE_SAVELOAD(shared_ptr, template <typename ElementType>, std::shared_ptr<ElementType>)
+    BIN_SERIALIZABLE
+    (
+        ::eightser::track(archive, shared_ptr);
+    )
 SERIALIZABLE_INIT()
 
 #endif // EIGHTSER_STANDARD_SHARED_PTR_HPP

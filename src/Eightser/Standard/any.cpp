@@ -5,8 +5,8 @@
 
 #include <cstdint> // uint64_t
 
-SERIALIZABLE(save, any, std::any)
-    SERIALIZATION
+SERIALIZABLE_SAVE(any, std::any)
+    BIN_SERIALIZABLE
     (
         std::uint64_t hash = any.type().hash_code();
         archive & hash;
@@ -15,8 +15,8 @@ SERIALIZABLE(save, any, std::any)
     )
 SERIALIZABLE_INIT()
 
-SERIALIZABLE(load, any, std::any)
-    SERIALIZATION
+SERIALIZABLE_LOAD(any, std::any)
+    BIN_SERIALIZABLE
     (
         std::uint64_t hash{};
         archive & hash;

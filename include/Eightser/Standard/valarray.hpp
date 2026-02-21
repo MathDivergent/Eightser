@@ -12,8 +12,8 @@
 TEMPLATE_SERIALIZABLE_DECLARATION(template <typename ValueType>, std::valarray<ValueType>)
 SERIALIZABLE_DECLARATION_INIT()
 
-TEMPLATE_SERIALIZABLE(save, valarray, template <typename ValueType>, std::valarray<ValueType>)
-    SERIALIZATION
+TEMPLATE_SERIALIZABLE_SAVE(valarray, template <typename ValueType>, std::valarray<ValueType>)
+    BIN_SERIALIZABLE
     (
         std::uint64_t size = valarray.size();
         archive & size;
@@ -22,8 +22,8 @@ TEMPLATE_SERIALIZABLE(save, valarray, template <typename ValueType>, std::valarr
     )
 SERIALIZABLE_INIT()
 
-TEMPLATE_SERIALIZABLE(load, valarray, template <typename ValueType>, std::valarray<ValueType>)
-    SERIALIZATION
+TEMPLATE_SERIALIZABLE_LOAD(valarray, template <typename ValueType>, std::valarray<ValueType>)
+    BIN_SERIALIZABLE
     (
         std::uint64_t size{};
         archive & size;

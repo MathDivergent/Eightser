@@ -55,8 +55,7 @@ namespace compress
 
 // always require compressible type for fast compression
 template <class ArchiveType, typename SerializableType,
-          EIGHTSER_REQUIRES(std::conjunction<meta::is_ioarchive<ArchiveType>,
-                                             meta::is_compressible<SerializableType>>::value)>
+          EIGHTSER_REQUIRES(meta::is_compressible<SerializableType>::value)>
 void fast(ArchiveType& archive, SerializableType& object)
 {
     using item_type = typename meta::value<SerializableType>::type;
@@ -68,16 +67,14 @@ void fast(ArchiveType& archive, SerializableType& object)
     );
 }
 
-template <class ArchiveType, typename SerializableType,
-          EIGHTSER_REQUIRES(meta::is_ioarchive<ArchiveType>::value)>
+template <class ArchiveType, typename SerializableType>
 void slow(ArchiveType& archive, SerializableType& object)
 {
     for (auto&& item : object)
         archive & item;
 }
 
-template <class ArchiveType, typename SerializableType,
-          EIGHTSER_REQUIRES(meta::is_ioarchive<ArchiveType>::value)>
+template <class ArchiveType, typename SerializableType>
 void zip(ArchiveType& archive, SerializableType& object)
 {
     if constexpr (meta::is_compressible<SerializableType>::value)

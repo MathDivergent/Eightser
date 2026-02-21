@@ -25,8 +25,8 @@ SERIALIZABLE_DECLARATION(Base)
     #endif // EIGHTSER_RTTI_ENABLE
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, Base)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, Base)
+    BIN_SERIALIZABLE
     (
         archive & self.x;
     )
@@ -40,8 +40,8 @@ SERIALIZABLE_DECLARATION(Derived)
     #endif // EIGHTSER_RTTI_ENABLE
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, Derived)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, Derived)
+    BIN_SERIALIZABLE
     (
         archive & hierarchy<Base>(self) & self.y;
     )

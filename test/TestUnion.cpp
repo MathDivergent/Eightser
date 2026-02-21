@@ -26,8 +26,8 @@ union Variant
 SERIALIZABLE_DECLARATION(Variant)
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, Variant)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, Variant)
+    BIN_SERIALIZABLE
     (
         // specify impl here
         archive & self.a;

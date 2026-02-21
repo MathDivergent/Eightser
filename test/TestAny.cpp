@@ -33,8 +33,8 @@ SERIALIZABLE_DECLARATION(Boy)
     INSTANTIABLE(S)
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, Boy)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, Boy)
+    BIN_SERIALIZABLE
     (
         archive & hierarchy<Entity>(self) & self.b;
     )
@@ -44,8 +44,8 @@ SERIALIZABLE_DECLARATION(Girl)
     INSTANTIABLE(S)
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, Girl)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, Girl)
+    BIN_SERIALIZABLE
     (
         archive & hierarchy<Entity>(self) & self.g;
     )
@@ -55,8 +55,8 @@ SERIALIZABLE_DECLARATION(Entity)
     INSTANTIABLE(S)
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, Entity)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, Entity)
+    BIN_SERIALIZABLE
     (
         archive & self.e;
     )

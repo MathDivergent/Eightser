@@ -2,8 +2,8 @@
 #include <Eightser/Core.hpp>
 
 // slow impl
-SERIALIZABLE(save, vector, std::vector<bool>)
-    SERIALIZATION
+SERIALIZABLE_SAVE(vector, std::vector<bool>)
+    BIN_SERIALIZABLE
     (
         std::uint64_t size = vector.size();
         archive & size;
@@ -16,8 +16,8 @@ SERIALIZABLE(save, vector, std::vector<bool>)
     )
 SERIALIZABLE_INIT()
 
-SERIALIZABLE(load, vector, std::vector<bool>)
-    SERIALIZATION
+SERIALIZABLE_LOAD(vector, std::vector<bool>)
+    BIN_SERIALIZABLE
     (
         std::uint64_t size{};
         archive & size;

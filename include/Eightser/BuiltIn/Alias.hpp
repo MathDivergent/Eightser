@@ -51,8 +51,8 @@ public:
 TEMPLATE_SERIALIZABLE_DECLARATION(template <typename ElementType>, ::eightser::alias_t<ElementType>)
 SERIALIZABLE_DECLARATION_INIT()
 
-TEMPLATE_SERIALIZABLE(save, alias, template <typename ElementType>, ::eightser::alias_t<ElementType>)
-    SERIALIZATION
+TEMPLATE_SERIALIZABLE_SAVE(alias, template <typename ElementType>, ::eightser::alias_t<ElementType>)
+    BIN_SERIALIZABLE
     (
         using pointer_hold_type = INSTANTIABLE_TYPE*; // need to overload tracking
 
@@ -69,8 +69,8 @@ TEMPLATE_SERIALIZABLE(save, alias, template <typename ElementType>, ::eightser::
     )
 SERIALIZABLE_INIT()
 
-TEMPLATE_SERIALIZABLE(load, alias, template <typename ElementType>, ::eightser::alias_t<ElementType>)
-    SERIALIZATION
+TEMPLATE_SERIALIZABLE_LOAD(alias, template <typename ElementType>, ::eightser::alias_t<ElementType>)
+    BIN_SERIALIZABLE
     (
         using pointer_hold_type = INSTANTIABLE_TYPE*; // need to overload tracking
 

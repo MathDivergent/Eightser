@@ -105,16 +105,16 @@ SERIALIZABLE_DECLARATION_INIT()
 SERIALIZABLE_DECLARATION(Square)
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, Triangle)
-    SERIALIZATION()
+SERIALIZABLE_SAVELOAD(self, Triangle)
+    BIN_SERIALIZABLE()
 SERIALIZABLE_INIT()
 
-SERIALIZABLE(saveload, self, Cyrcle)
-    SERIALIZATION()
+SERIALIZABLE_SAVELOAD(self, Cyrcle)
+    BIN_SERIALIZABLE()
 SERIALIZABLE_INIT()
 
-SERIALIZABLE(saveload, self, Square)
-    SERIALIZATION()
+SERIALIZABLE_SAVELOAD(self, Square)
+    BIN_SERIALIZABLE()
 SERIALIZABLE_INIT()
 
 TEST(TestLibrary, TestInstantiableRegistry)
@@ -187,24 +187,24 @@ SERIALIZABLE_DECLARATION(MyStruct)
     INSTANTIABLE_KEY(EIGHTSER_STRING_HASH("MyClass"), S)
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, MyStruct)
-    SERIALIZATION()
+SERIALIZABLE_SAVELOAD(self, MyStruct)
+    BIN_SERIALIZABLE()
 SERIALIZABLE_INIT()
 
 SERIALIZABLE_DECLARATION(MyClass)
     INSTANTIABLE_KEY(EIGHTSER_STRING_HASH("MyStruct"), S)
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, MyClass)
-    SERIALIZATION()
+SERIALIZABLE_SAVELOAD(self, MyClass)
+    BIN_SERIALIZABLE()
 SERIALIZABLE_INIT()
 
 SERIALIZABLE_DECLARATION(MyDerivedClass)
     INSTANTIABLE_KEY(EIGHTSER_STRING_HASH("MyDerived"), S)
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, MyDerivedClass)
-    SERIALIZATION()
+SERIALIZABLE_SAVELOAD(self, MyDerivedClass)
+    BIN_SERIALIZABLE()
 SERIALIZABLE_INIT()
 
 SERIALIZABLE_DECLARATION(MyCustomType)
@@ -215,8 +215,8 @@ SERIALIZABLE_DECLARATION(MyCustomType)
     #endif // EIGHTSER_RTTI_ENABLE
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, MyCustomType)
-    SERIALIZATION()
+SERIALIZABLE_SAVELOAD(self, MyCustomType)
+    BIN_SERIALIZABLE()
 SERIALIZABLE_INIT()
 
 TEST(TestLibrary, TestExportInstantiable)
@@ -257,7 +257,7 @@ TEST(TestLibrary, TestStreamWrapper)
 {
     static std::string s_s = "Hello, World!";
 
-    std::vector<char> storage;
+    std::vector<char> storage;  // note: SERIALIZABLE_ARCHIVE_DECLARATION not provided for test only
     {
         std::string s = s_s;
 
@@ -379,55 +379,55 @@ SERIALIZABLE_DECLARATION(DecorativeFoliageObject)
     INSTANTIABLE(S)
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, WorldObject)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, WorldObject)
+    BIN_SERIALIZABLE
     (
         ++self.wo;
     )
 SERIALIZABLE_INIT()
 
-SERIALIZABLE(saveload, self, EnvironmentObject)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, EnvironmentObject)
+    BIN_SERIALIZABLE
     (
         ++self.eo;
         archive & hierarchy<WorldObject>(self);
     )
 SERIALIZABLE_INIT()
 
-SERIALIZABLE(saveload, self, MoveableObject)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, MoveableObject)
+    BIN_SERIALIZABLE
     (
         ++self.mo;
         archive & hierarchy<EnvironmentObject>(self);
     )
 SERIALIZABLE_INIT()
 
-SERIALIZABLE(saveload, self, DestructibleObject)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, DestructibleObject)
+    BIN_SERIALIZABLE
     (
         ++self.dso;
         archive & hierarchy<EnvironmentObject>(self);
     )
 SERIALIZABLE_INIT()
 
-SERIALIZABLE(saveload, self, DecorativeObject)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, DecorativeObject)
+    BIN_SERIALIZABLE
     (
         ++self.dco;
         archive & hierarchy<DestructibleObject, MoveableObject>(self);
     )
 SERIALIZABLE_INIT()
 
-SERIALIZABLE(saveload, self, FoliageObject)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, FoliageObject)
+    BIN_SERIALIZABLE
     (
         ++self.fo;
         archive & hierarchy<WorldObject>(self);
     )
 SERIALIZABLE_INIT()
 
-SERIALIZABLE(saveload, self, DecorativeFoliageObject)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, DecorativeFoliageObject)
+    BIN_SERIALIZABLE
     (
         ++self.dcfo;
         archive & hierarchy<DecorativeObject, FoliageObject>(self);
@@ -517,8 +517,8 @@ struct PolymorphicDerived : public PolymorphicBase {};
 SERIALIZABLE_DECLARATION(SomeObjectImpl)
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, SomeObjectImpl)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, SomeObjectImpl)
+    BIN_SERIALIZABLE
     (
         archive & self.data_;
     )
@@ -527,8 +527,8 @@ SERIALIZABLE_INIT()
 SERIALIZABLE_DECLARATION(SomeObject)
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, SomeObject)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, SomeObject)
+    BIN_SERIALIZABLE
     (
         archive & hierarchy<SomeObjectImpl>(self) & self.inner_data_;
     )
@@ -537,15 +537,15 @@ SERIALIZABLE_INIT()
 SERIALIZABLE_DECLARATION(PolymorphicBaseImpl)
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, PolymorphicBaseImpl)
-    SERIALIZATION()
+SERIALIZABLE_SAVELOAD(self, PolymorphicBaseImpl)
+    BIN_SERIALIZABLE()
 SERIALIZABLE_INIT()
 
 SERIALIZABLE_DECLARATION(PolymorphicBase)
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, PolymorphicBase)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, PolymorphicBase)
+    BIN_SERIALIZABLE
     (
         // not compile for: non-public inheritance
         // archive & hierarchy<PolymorphicBaseImpl>(self);
@@ -555,8 +555,8 @@ SERIALIZABLE_INIT()
 SERIALIZABLE_DECLARATION(PolymorphicDerived)
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, PolymorphicDerived)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, PolymorphicDerived)
+    BIN_SERIALIZABLE
     (
         archive & hierarchy<PolymorphicBase>(self);
     )
@@ -615,8 +615,8 @@ struct NoTraitsDerived : NoTraitsBase
 SERIALIZABLE_DECLARATION(NoTraitsBase)
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, NoTraitsBase)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, NoTraitsBase)
+    BIN_SERIALIZABLE
     (
         archive & self.b;
     )
@@ -625,8 +625,8 @@ SERIALIZABLE_INIT()
 SERIALIZABLE_DECLARATION(NoTraitsDerived)
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, NoTraitsDerived)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, NoTraitsDerived)
+    BIN_SERIALIZABLE
     (
         archive & hierarchy<NoTraitsBase>(self) & self.d;
     )
@@ -717,8 +717,8 @@ SERIALIZABLE_DECLARATION(AggregateObject)
 SERIALIZABLE_DECLARATION_INIT()
 
 // it's works only for full template specialization
-SERIALIZABLE(saveload, self, AggregateObject)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, AggregateObject)
+    BIN_SERIALIZABLE
     (
         archive & self.i & self.f; // ignoring self.c
     )
@@ -778,8 +778,8 @@ SERIALIZABLE_DECLARATION(Interface)
     #endif // EIGHTSER_RTTI_ENABLE
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, Interface)
-    SERIALIZATION()
+SERIALIZABLE_SAVELOAD(self, Interface)
+    BIN_SERIALIZABLE()
 SERIALIZABLE_INIT()
 
 SERIALIZABLE_DECLARATION(Implementation)
@@ -790,12 +790,12 @@ SERIALIZABLE_DECLARATION(Implementation)
     #endif // EIGHTSER_RTTI_ENABLE
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, Implementation)
-    SERIALIZATION()
+SERIALIZABLE_SAVELOAD(self, Implementation)
+    BIN_SERIALIZABLE()
 SERIALIZABLE_INIT()
 
 // or general solution
-// CONDITIONAL_SERIALIZABLE(saveload, std::is_base_of<Interface, T>::value) {}
+// CONDITIONAL_SERIALIZABLE_SAVELOAD(std::is_base_of_v<Interface, T>) {}
 
 TEST(TestLibrary, TestAbstract)
 {

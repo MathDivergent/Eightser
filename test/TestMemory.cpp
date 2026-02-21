@@ -31,8 +31,8 @@ SERIALIZABLE_DECLARATION(Parent)
     #endif // EIGHTSER_RTTI_ENABLE
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, Parent)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, Parent)
+    BIN_SERIALIZABLE
     (
         archive & self.p;
     )
@@ -46,8 +46,8 @@ SERIALIZABLE_DECLARATION(Child)
     #endif // EIGHTSER_RTTI_ENABLE
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, Child)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, Child)
+    BIN_SERIALIZABLE
     (
         archive & hierarchy<Parent>(self) & self.c;
     )
@@ -143,31 +143,31 @@ SERIALIZABLE_DECLARATION(D)
     INSTANTIABLE(S)
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, A)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, A)
+    BIN_SERIALIZABLE
     (
         archive & self.a;
     )
 SERIALIZABLE_INIT()
 
-SERIALIZABLE(saveload, self, B)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, B)
+    BIN_SERIALIZABLE
     (
         archive & hierarchy<A>(self)
                 & self.b;
     )
 SERIALIZABLE_INIT()
 
-SERIALIZABLE(saveload, self, C)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, C)
+    BIN_SERIALIZABLE
     (
         archive & hierarchy<A>(self)
                 & self.c;
     )
 SERIALIZABLE_INIT()
 
-SERIALIZABLE(saveload, self, D)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, D)
+    BIN_SERIALIZABLE
     (
         archive & hierarchy<B, C>(self) // type order does not matter
                 & self.d;
@@ -327,8 +327,8 @@ struct Human
 SERIALIZABLE_DECLARATION(Human)
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, Human)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, Human)
+    BIN_SERIALIZABLE
     (
         archive & self.name & self.partner;
     )

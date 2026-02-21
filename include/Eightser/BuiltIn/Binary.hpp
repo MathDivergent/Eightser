@@ -10,8 +10,7 @@
 namespace eightser
 {
 
-template <class ArchiveType, typename SerializableType,
-          EIGHTSER_REQUIRES(meta::is_ioarchive<ArchiveType>::value)>
+template <class ArchiveType, typename SerializableType>
 void binary(ArchiveType& archive, SerializableType& data)
 {
     archive.stream().call(std::addressof(data), 1);

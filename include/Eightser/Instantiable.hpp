@@ -13,8 +13,10 @@
 namespace eightser
 {
 
-struct instantiable_t { virtual ~instantiable_t() = default; };
-
+struct EIGHTSER_API instantiable_t
+{
+    virtual ~instantiable_t() = default;
+};
 
 template <typename PointerType>
 typename memory::pointer_traits<PointerType>::template pointer_template<INSTANTIABLE_TYPE> hold_type_erasure(PointerType const& pointer)

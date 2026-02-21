@@ -5,11 +5,11 @@
 #include <Eightser/Serializable.hpp>
 #include <Eightser/BuiltIn/Binary.hpp>
 
-CONDITIONAL_SERIALIZABLE_DECLARATION(std::is_union<S>::value)
+CONDITIONAL_SERIALIZABLE_DECLARATION(std::is_union_v<S>)
 SERIALIZABLE_DECLARATION_INIT()
 
-CONDITIONAL_SERIALIZABLE(saveload, data, std::is_union<S>::value)
-    SERIALIZATION
+CONDITIONAL_SERIALIZABLE_SAVELOAD(data, std::is_union_v<S>)
+    BIN_SERIALIZABLE
     (
         ::eightser::binary(archive, data);
     )

@@ -38,15 +38,15 @@ SERIALIZABLE_DECLARATION_INIT()
 // ~
 
 // in .cpp files
-SERIALIZABLE(saveload, self, Prototype)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, Prototype)
+    BIN_SERIALIZABLE
     (
         archive & self.name & self.properties;
     )
 SERIALIZABLE_INIT()
 
-SERIALIZABLE(saveload, self, Handbook)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, Handbook)
+    BIN_SERIALIZABLE
     (
         archive & self.prototypes;
     )

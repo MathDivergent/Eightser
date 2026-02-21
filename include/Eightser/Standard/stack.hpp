@@ -13,8 +13,8 @@
 TEMPLATE_SERIALIZABLE_DECLARATION((template <typename ValueType, class ContainerType>), std::stack<ValueType, ContainerType>)
 SERIALIZABLE_DECLARATION_INIT()
 
-TEMPLATE_SERIALIZABLE(saveload, stack, (template <typename ValueType, class ContainerType>), std::stack<ValueType, ContainerType>)
-    SERIALIZATION
+TEMPLATE_SERIALIZABLE_SAVELOAD(stack, (template <typename ValueType, class ContainerType>), std::stack<ValueType, ContainerType>)
+    BIN_SERIALIZABLE
     (
         archive & ::eightser::meta::underlying(stack);
     )

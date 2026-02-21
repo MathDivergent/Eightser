@@ -41,7 +41,7 @@ TEMPLATE_SERIALIZABLE_DECLARATION(template <class SomeType>, Base<SomeType>)
     #endif // EIGHTSER_RTTI_ENABLE
 SERIALIZABLE_DECLARATION_INIT()
 
-TEMPLATE_SERIALIZABLE(saveload, self, template <class SomeType>, Base<SomeType>)
+TEMPLATE_SERIALIZABLE_SAVELOAD(self, template <class SomeType>, Base<SomeType>)
     // more specialize version
     archive & self.data;
 SERIALIZABLE_INIT()
@@ -54,7 +54,7 @@ SERIALIZABLE_DECLARATION(internal::Derived)
     #endif // EIGHTSER_RTTI_ENABLE
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, internal::Derived)
+SERIALIZABLE_SAVELOAD(self, internal::Derived)
     archive & hierarchy<Base<std::string>>(self);
     archive & self.value;
 SERIALIZABLE_INIT()

@@ -5,15 +5,13 @@
 #include <unordered_map> // unordered_map
 
 #include <Eightser/ArchiveBase.hpp>
+#include <Eightser/ArchiveTraits.hpp>
 #include <Eightser/Memory.hpp>
 #include <Eightser/Serializable.hpp>
-
 #include <Eightser/InstantiableRegistry.hpp>
-
 #include <Eightser/StreamWrapper.hpp>
 
 #include <Eightser/Detail/Meta.hpp>
-#include <Eightser/Detail/Macro.hpp>
 
 namespace eightser
 {
@@ -68,7 +66,7 @@ private:
 public:
     template <typename OutputStreamType>
     oarchive_t(OutputStreamType& stream, ::xxeightser_archive_type_key_type type = bin)
-        : ioarchive_t(::xxeightser_archive_traits<oarchive_t>::key, type, false)
+        : ioarchive_t(::xxeightser_archive_traits<oarchive_t>::key, type, true)
         , xxstream{stream}, xxtracking() {}
 
     StreamWrapperType& stream() noexcept { return xxstream; }

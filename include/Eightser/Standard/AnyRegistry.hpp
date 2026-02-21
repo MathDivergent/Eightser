@@ -16,7 +16,7 @@
 namespace eightser
 {
 
-struct any_registry_t final
+struct EIGHTSER_API any_registry_t final
 {
 public:
     struct any_proxy_t
@@ -56,7 +56,7 @@ public:
     void load(ioarchive_t& archive, std::any& any, std::uint64_t hash);
 };
 
-extern any_registry_t* any_registry();
+extern EIGHTSER_API any_registry_t* any_registry();
 
 } // namespace eightser
 

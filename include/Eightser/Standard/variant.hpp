@@ -16,44 +16,43 @@ namespace eightser
 namespace detail
 {
 
-template <std::uint64_t ElementIndexValue, class ArchiveType, class VariantType,
-          EIGHTSER_REQUIRES(ElementIndexValue == std::variant_size<VariantType>::value)>
-void variant_save(ArchiveType&, VariantType&, std::uint64_t) noexcept { /*pass*/ }
-
-template <std::uint64_t ElementIndexValue = 0, class ArchiveType, class VariantType,
-          EIGHTSER_REQUIRES(ElementIndexValue < std::variant_size<VariantType>::value)>
-void variant_save(ArchiveType& archive, VariantType& variant, std::uint64_t index)
+template <std::uint64_t VariantAlternativeIndexValue = 0, class ArchiveType, class VariantType>
+void variant_save(ArchiveType& archive, VariantType& variant, std::uint64_t varian_alternative_index)
 {
-    if (ElementIndexValue < index) return variant_save<ElementIndexValue + 1>(archive, variant, index);
-    archive & std::get<ElementIndexValue>(variant);
+    if constexpr (VariantAlternativeIndexValue < std::variant_size_v<VariantType>)
+    {
+        if (VariantAlternativeIndexValue < varian_alternative_index)
+        {
+            return variant_save<VariantAlternativeIndexValue + 1>(archive, variant, varian_alternative_index);
+        }
+        else
+        {
+            archive & std::get<VariantAlternativeIndexValue>(variant);
+        }
+    }
 }
 
-template <typename ElementType, class ArchiveType, class VariantType,
-          EIGHTSER_REQUIRES(std::negation<std::is_constructible<ElementType>>::value)>
-void variant_load_impl(ArchiveType&, VariantType&)
+template <std::uint64_t VariantAlternativeIndexValue = 0, class ArchiveType, class VariantType>
+void variant_load(ArchiveType& archive, VariantType& variant, std::uint64_t varian_alternative_index)
 {
-    throw "Require default constructor for specify type.";
-}
+    if constexpr (VariantAlternativeIndexValue < std::variant_size_v<VariantType>)
+    {
+        using variant_alternative_type = std::variant_alternative_t<VariantAlternativeIndexValue, VariantType>;
 
-template <typename ElementType, class ArchiveType, class VariantType,
-          EIGHTSER_REQUIRES(std::is_constructible<ElementType>::value)>
-void variant_load_impl(ArchiveType& archive, VariantType& variant)
-{
-    archive & variant.template emplace<ElementType>();
-}
+        if (VariantAlternativeIndexValue < varian_alternative_index)
+        {
+            return variant_load<VariantAlternativeIndexValue + 1>(archive, variant, varian_alternative_index);
+        }
 
-template <std::uint64_t ElementIndexValue, class ArchiveType, class VariantType,
-          EIGHTSER_REQUIRES(ElementIndexValue == std::variant_size<VariantType>::value)>
-void variant_load(ArchiveType&, VariantType&, std::uint64_t) noexcept { /*pass*/ }
-
-template <std::uint64_t ElementIndexValue = 0, class ArchiveType, class VariantType,
-          EIGHTSER_REQUIRES(ElementIndexValue < std::variant_size<VariantType>::value)>
-void variant_load(ArchiveType& archive, VariantType& variant, std::uint64_t index)
-{
-    if (ElementIndexValue < index) return variant_load<ElementIndexValue + 1>(archive, variant, index);
-
-    using type = typename std::variant_alternative<ElementIndexValue, VariantType>::type;
-    variant_load_impl<type>(archive, variant);
+        if constexpr (std::is_constructible_v<variant_alternative_type>)
+        {
+            archive & variant.template emplace<variant_alternative_type>();
+        }
+        else
+        {
+            throw "Require default constructor for specify type.";
+        }
+    }
 }
 
 } // namespace detail
@@ -63,18 +62,30 @@ void variant_load(ArchiveType& archive, VariantType& variant, std::uint64_t inde
 TEMPLATE_SERIALIZABLE_DECLARATION(template <typename... ArgumentTypes>, std::variant<ArgumentTypes...>)
 SERIALIZABLE_DECLARATION_INIT()
 
-TEMPLATE_SERIALIZABLE(save, variant, template <typename... ArgumentTypes>, std::variant<ArgumentTypes...>)
-    std::uint64_t index = variant.index();
-    archive & index;
+TEMPLATE_SERIALIZABLE_SAVE(variant, template <typename... ArgumentTypes>, std::variant<ArgumentTypes...>)
+    BIN_SERIALIZABLE
+    (
+        std::uint64_t varian_alternative_index = variant.index();
+        archive & varian_alternative_index;
 
-    if (index != std::variant_npos) ::eightser::detail::variant_save(archive, variant, index);
+        if (varian_alternative_index != std::variant_npos)
+        {
+            ::eightser::detail::variant_save(archive, variant, varian_alternative_index);
+        }
+    )
 SERIALIZABLE_INIT()
 
-TEMPLATE_SERIALIZABLE(load, variant, (template <typename... ArgumentTypes>), std::variant<ArgumentTypes...>)
-    std::uint64_t index{};
-    archive & index;
+TEMPLATE_SERIALIZABLE_LOAD(variant, (template <typename... ArgumentTypes>), std::variant<ArgumentTypes...>)
+    BIN_SERIALIZABLE
+    (
+        std::uint64_t varian_alternative_index{};
+        archive & varian_alternative_index;
 
-    if (index != std::variant_npos) ::eightser::detail::variant_load(archive, variant, index);
+        if (varian_alternative_index != std::variant_npos)
+        {
+            ::eightser::detail::variant_load(archive, variant, varian_alternative_index);
+        }
+    )
 SERIALIZABLE_INIT()
 
 #endif // EIGHTSER_STANDARD_VARIANT_HPP

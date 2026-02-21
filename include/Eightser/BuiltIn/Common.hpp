@@ -10,32 +10,32 @@
 #include <Eightser/BuiltIn/DataTrack.hpp>
 #include <Eightser/BuiltIn/Compress.hpp>
 
-CONDITIONAL_SERIALIZABLE_DECLARATION(std::is_arithmetic<S>::value)
+CONDITIONAL_SERIALIZABLE_DECLARATION(std::is_arithmetic_v<S>)
 SERIALIZABLE_DECLARATION_INIT()
 
-CONDITIONAL_SERIALIZABLE(saveload, number, std::is_arithmetic<S>::value)
-    SERIALIZATION
+CONDITIONAL_SERIALIZABLE_SAVELOAD(number, std::is_arithmetic_v<S>)
+    BIN_SERIALIZABLE
     (
         ::eightser::binary(archive, number);
     )
 SERIALIZABLE_INIT()
 
 
-CONDITIONAL_SERIALIZABLE_DECLARATION(std::is_enum<S>::value)
+CONDITIONAL_SERIALIZABLE_DECLARATION(std::is_enum_v<S>)
 SERIALIZABLE_DECLARATION_INIT()
 
-CONDITIONAL_SERIALIZABLE(save, enumerator, std::is_enum<S>::value)
-    SERIALIZATION
+CONDITIONAL_SERIALIZABLE_SAVE(enumerator, std::is_enum_v<S>)
+    BIN_SERIALIZABLE
     (
-        auto value = static_cast<typename std::underlying_type<S>::type>(enumerator);
+        auto value = static_cast<std::underlying_type_t<S>>(enumerator);
         archive & value;
     )
 SERIALIZABLE_INIT()
 
-CONDITIONAL_SERIALIZABLE(load, enumerator, std::is_enum<S>::value)
-    SERIALIZATION
+CONDITIONAL_SERIALIZABLE_LOAD(enumerator, std::is_enum_v<S>)
+    BIN_SERIALIZABLE
     (
-        typename std::underlying_type<S>::type buff{};
+        std::underlying_type_t<S> buff{};
         archive & buff;
 
         enumerator = static_cast<S>(buff);
@@ -43,11 +43,11 @@ CONDITIONAL_SERIALIZABLE(load, enumerator, std::is_enum<S>::value)
 SERIALIZABLE_INIT()
 
 
-CONDITIONAL_SERIALIZABLE_DECLARATION(std::is_array<S>::value)
+CONDITIONAL_SERIALIZABLE_DECLARATION(std::is_array_v<S>)
 SERIALIZABLE_DECLARATION_INIT()
 
-CONDITIONAL_SERIALIZABLE(saveload, array, std::is_array<S>::value)
-    SERIALIZATION
+CONDITIONAL_SERIALIZABLE_SAVELOAD(array, std::is_array_v<S>)
+    BIN_SERIALIZABLE
     (
         ::eightser::compress::zip(archive, array);
     )
@@ -61,8 +61,8 @@ struct xxeightser_is_pointer
 CONDITIONAL_SERIALIZABLE_DECLARATION(xxeightser_is_pointer<S>::value)
 SERIALIZABLE_DECLARATION_INIT()
 
-CONDITIONAL_SERIALIZABLE(saveload, pointer, xxeightser_is_pointer<S>::value)
-    SERIALIZATION
+CONDITIONAL_SERIALIZABLE_SAVELOAD(pointer, xxeightser_is_pointer<S>::value)
+    BIN_SERIALIZABLE
     (
         #ifdef EIGHTSER_PTRTRACK_ENABLE
         ::eightser::track(archive, pointer);

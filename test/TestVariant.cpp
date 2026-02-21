@@ -18,7 +18,7 @@ struct OwnType
 SERIALIZABLE_DECLARATION(OwnType)
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, OwnType)
+SERIALIZABLE_SAVELOAD(self, OwnType)
     archive & self.var;
 SERIALIZABLE_INIT()
 

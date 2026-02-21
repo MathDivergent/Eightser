@@ -12,16 +12,16 @@ TEMPLATE_SERIALIZABLE_DECLARATION(template <std::size_t SizeValue>, std::bitset<
 SERIALIZABLE_DECLARATION_INIT()
 
 // slow impl
-TEMPLATE_SERIALIZABLE(save, bitset, template <std::size_t SizeValue>, std::bitset<SizeValue>)
-    SERIALIZATION
+TEMPLATE_SERIALIZABLE_SAVE(bitset, template <std::size_t SizeValue>, std::bitset<SizeValue>)
+    BIN_SERIALIZABLE
     (
         auto data = bitset.to_string();
         archive & data;
     )
 SERIALIZABLE_INIT()
 
-TEMPLATE_SERIALIZABLE(load, bitset, template <std::size_t SizeValue>, std::bitset<SizeValue>)
-    SERIALIZATION
+TEMPLATE_SERIALIZABLE_LOAD(bitset, template <std::size_t SizeValue>, std::bitset<SizeValue>)
+    BIN_SERIALIZABLE
     (
         std::string data;
         archive & data;

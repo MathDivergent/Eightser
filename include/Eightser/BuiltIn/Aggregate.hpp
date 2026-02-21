@@ -42,9 +42,7 @@ EIGHTSER_REPEAT(EIGHTSER_AGGREGATE_IMPLEMENTATION_GENERIC, 64)
 
 } // namespace detail
 
-template <class ArchiveType, typename SerializableType,
-          EIGHTSER_REQUIRES(std::conjunction<meta::is_ioarchive<ArchiveType>,
-                                       meta::is_aggregate<SerializableType>>::value)>
+template <class ArchiveType, typename SerializableType>
 void aggregate(ArchiveType& archive, SerializableType& object)
 {
     constexpr auto N = meta::aggregate_size<SerializableType>::size();
@@ -76,8 +74,8 @@ apply::aggregate_functor_t<SerializableType> aggregate(SerializableType& object)
 CONDITIONAL_SERIALIZABLE_DECLARATION(::eightser::meta::is_serializable_aggregate<S>::value)
 SERIALIZABLE_DECLARATION_INIT()
 
-CONDITIONAL_SERIALIZABLE(saveload, object, ::eightser::meta::is_serializable_aggregate<S>::value)
-    SERIALIZATION
+CONDITIONAL_SERIALIZABLE_SAVELOAD(object, ::eightser::meta::is_serializable_aggregate<S>::value)
+    BIN_SERIALIZABLE
     (
         ::eightser::aggregate(archive, object);
     )

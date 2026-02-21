@@ -16,16 +16,14 @@ namespace eightser
 {
 
 template <class BaseType, class ArchiveType, class DerivedType,
-          EIGHTSER_REQUIRES(std::conjunction<meta::is_ioarchive<ArchiveType>,
-                                             std::is_base_of<BaseType, DerivedType>>::value)>
+          EIGHTSER_REQUIRES(std::is_base_of<BaseType, DerivedType>::value)>
 void base(ArchiveType& archive, DerivedType& object)
 {
     archive & ::xxeightser_cast_to_non_public_base::call<BaseType>(object);
 }
 
 template <class BaseType, class ArchiveType, class DerivedType,
-          EIGHTSER_REQUIRES(std::conjunction<meta::is_ioarchive<ArchiveType>,
-                                             std::is_base_of<BaseType, DerivedType>>::value)>
+          EIGHTSER_REQUIRES(std::is_base_of<BaseType, DerivedType>::value)>
 void virtual_base(ArchiveType& archive, DerivedType& object)
 {
     #ifdef EIGHTSER_PTRTRACK_ENABLE
@@ -92,11 +90,11 @@ struct virtual_base_functor_t : apply_functor_t
 } // namespace apply
 
 template <class BaseType, class DerivedType,
-          EIGHTSER_REQUIRES(std::is_base_of<BaseType, DerivedType>::value)>
+          EIGHTSER_REQUIRES(std::is_base_of_v<BaseType, DerivedType>)>
 apply::base_functor_t<DerivedType, BaseType> base(DerivedType& object) noexcept { return { object }; }
 
 template <class BaseType, class DerivedType,
-          EIGHTSER_REQUIRES(std::is_base_of<BaseType, DerivedType>::value)>
+          EIGHTSER_REQUIRES(std::is_base_of_v<BaseType, DerivedType>)>
 apply::virtual_base_functor_t<DerivedType, BaseType> virtual_base(DerivedType& object) noexcept { return { object }; }
 
 // default empty impl
@@ -105,8 +103,7 @@ void hierarchy(ArchiveType&, DerivedType&) noexcept { /*pass*/ }
 
 // Variadic native_base function
 template <class BaseType, class... BaseTypes, class ArchiveType, class DerivedType,
-          EIGHTSER_REQUIRES(std::conjunction<meta::is_ioarchive<ArchiveType>,
-                                             meta::is_derived_of<DerivedType, BaseType, BaseTypes...>>::value)>
+          EIGHTSER_REQUIRES(meta::is_derived_of<DerivedType, BaseType, BaseTypes...>::value)>
 void hierarchy(ArchiveType& archive, DerivedType& object)
 {
     detail::native_base<BaseType>(archive, object);

@@ -23,7 +23,7 @@
 namespace eightser
 {
 
-struct instantiable_registry_t final
+struct EIGHTSER_API instantiable_registry_t final
 {
 public:
     template <typename PointerHoldType>
@@ -72,11 +72,16 @@ private:
         add_impl<InstantiableType, OtherPointerHoldTypes...>(proxy);
     }
 
+private:
+    template <typename, typename enable = void> struct has_key : std::false_type {};
+    template <typename SerializableType>
+    struct has_key<SerializableType, std::void_t<decltype(&::xxeightser<SerializableType>::key)>> : std::true_type {};
+
 public:
     template <typename InstantiableType>
     ::xxeightser_instantiable_traits_key_type key()
     {
-        if constexpr (meta::is_key<InstantiableType>::value)
+        if constexpr (has_key<InstantiableType>::value)
         {
             return ::xxeightser<InstantiableType>::key();
         }
@@ -149,7 +154,7 @@ public:
     bool fixture()
     {
         #ifdef EIGHTSER_DEBUG
-        if (std::negation<is_instantiable<InstantiableType>>::value)
+        if constexpr (std::negation_v<is_instantiable<InstantiableType>>)
             throw "The polymorphic 'InstantiableType' type is not convertible to 'instantiable_t'.";
         #endif // EIGHTSER_DEBUG
 
@@ -210,7 +215,7 @@ public:
     }
 };
 
-extern instantiable_registry_t* instantiable_registry();
+extern EIGHTSER_API instantiable_registry_t* instantiable_registry();
 
 } // namespace eightser
 

@@ -26,8 +26,8 @@ void expand(ArchiveType& archive, std::tuple<ArgumentTypes...>& tuple, std::inde
 TEMPLATE_SERIALIZABLE_DECLARATION(template <typename... ArgumentTypes>, std::tuple<ArgumentTypes...>)
 SERIALIZABLE_DECLARATION_INIT()
 
-TEMPLATE_SERIALIZABLE(saveload, tuple, template <typename... ArgumentTypes>, std::tuple<ArgumentTypes...>)
-    SERIALIZATION
+TEMPLATE_SERIALIZABLE_SAVELOAD(tuple, template <typename... ArgumentTypes>, std::tuple<ArgumentTypes...>)
+    BIN_SERIALIZABLE
     (
         ::eightser::detail::expand(archive, tuple, std::make_index_sequence<sizeof...(ArgumentTypes)>{});
     )

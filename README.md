@@ -16,7 +16,7 @@ The type registrar will allow you to properly serialize and deserialize polymorp
 
 A library implemented purely in C++17.
 
-See last stable library version 3.4.0 [here](https://github.com/MathDivergent/Eightser/releases).
+See last stable library version 4.0.0 [here](https://github.com/MathDivergent/Eightser/releases).
 
 ## Functional:
 
@@ -97,15 +97,15 @@ SERIALIZABLE_DECLARATION_INIT()
 // ~
 
 // in .cpp files
-SERIALIZABLE(saveload, self, Prototype)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, Prototype)
+    BIN_SERIALIZABLE
     (
         archive & self.name & self.properties;
     )
 SERIALIZABLE_INIT()
 
-SERIALIZABLE(saveload, self, Handbook)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, Handbook)
+    BIN_SERIALIZABLE
     (
         archive & self.prototypes;
     )
@@ -114,8 +114,8 @@ SERIALIZABLE_INIT()
 ```
 Explaining of using macros above:
 - ```SERIALIZABLE_DECLARATION(<type>) <properties> SERIALIZABLE_DECLARATION_INIT()``` - Generate header code to access the implementation for the specified class.
-- ```SERIALIZABLE(<mode>, <object>, <type>) <serialization> SERIALIZABLE_INIT()``` - Generate 'save/load/saveload' serialization functions for the specified class.
-- ```SERIALIZATION(<body>)``` - Generate 'if' branch for 'bin/xml/json' and custom archive types (bin is the default).
+- ```SERIALIZABLE_<mode>(<object>, <type>) <serialization> SERIALIZABLE_INIT()``` - Generate 'save/load/saveload' serialization functions for the specified class.
+- ```<archive_type>_SERIALIZABLE(<body>)``` - Generate 'if' branch for 'bin/xml/json' and custom archive types (`bin` is the default).
 
 ### Using of serialization library:
 

@@ -21,8 +21,8 @@ constexpr bool operator== (const IntPoint& A, const IntPoint& B) noexcept
 SERIALIZABLE_DECLARATION(IntPoint)
 SERIALIZABLE_DECLARATION_INIT()
 
-SERIALIZABLE(saveload, self, IntPoint)
-    SERIALIZATION
+SERIALIZABLE_SAVELOAD(self, IntPoint)
+    BIN_SERIALIZABLE
     (
         archive & self.X & self.Y;
     )

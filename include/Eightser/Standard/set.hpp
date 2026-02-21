@@ -34,32 +34,11 @@ template <class StdSetType> struct xxeightser_is_std_any_set
                        ::xxeightser_is_std_multiset<StdSetType>,
                        ::xxeightser_is_std_any_unordered_set<StdSetType>> {};
 
-namespace eightser
-{
-
-namespace detail
-{
-
-template <class StdSetType,
-          EIGHTSER_REQUIRES(std::negation<::xxeightser_is_std_any_unordered_set<StdSetType>>::value)>
-void reserve_unordered(StdSetType&, std::size_t) noexcept { /*pass*/ }
-
-template <class StdSetType,
-          EIGHTSER_REQUIRES(::xxeightser_is_std_any_unordered_set<StdSetType>::value)>
-void reserve_unordered(StdSetType& unordered, std::size_t size)
-{
-    unordered.reserve(size);
-}
-
-} // namespace detail
-
-} // namespace eightser
-
 CONDITIONAL_SERIALIZABLE_DECLARATION(::xxeightser_is_std_any_set<S>::value)
 SERIALIZABLE_DECLARATION_INIT()
 
-CONDITIONAL_SERIALIZABLE(save, set, ::xxeightser_is_std_any_set<S>::value)
-    SERIALIZATION
+CONDITIONAL_SERIALIZABLE_SAVE(set, ::xxeightser_is_std_any_set<S>::value)
+    BIN_SERIALIZABLE
     (
         std::uint64_t size = set.size();
         archive & size;
@@ -68,8 +47,8 @@ CONDITIONAL_SERIALIZABLE(save, set, ::xxeightser_is_std_any_set<S>::value)
     )
 SERIALIZABLE_INIT()
 
-CONDITIONAL_SERIALIZABLE(load, set, ::xxeightser_is_std_any_set<S>::value)
-    SERIALIZATION
+CONDITIONAL_SERIALIZABLE_LOAD(set, ::xxeightser_is_std_any_set<S>::value)
+    BIN_SERIALIZABLE
     (
         using value_type = typename S::value_type;
 
@@ -77,7 +56,10 @@ CONDITIONAL_SERIALIZABLE(load, set, ::xxeightser_is_std_any_set<S>::value)
         archive & size;
 
         set.clear();
-        ::eightser::detail::reserve_unordered(set, size);
+        if constexpr (::xxeightser_is_std_any_unordered_set<S>::value)
+        {
+            set.reserve(size);
+        }
 
         auto hint = set.begin();
         for (std::uint64_t i = 0; i < size; ++i)

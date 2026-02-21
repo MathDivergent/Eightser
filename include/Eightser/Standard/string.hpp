@@ -16,13 +16,13 @@ TEMPLATE_SERIALIZABLE_DECLARATION
 )
 SERIALIZABLE_DECLARATION_INIT()
 
-TEMPLATE_SERIALIZABLE
+TEMPLATE_SERIALIZABLE_SAVE
 (
-    save, string,
+    string,
     (template <typename CharType, typename TraitsType, typename AllocatorType>),
     std::basic_string<CharType, TraitsType, AllocatorType>
 )
-    SERIALIZATION
+    BIN_SERIALIZABLE
     (
         std::uint64_t size = string.size();
         archive & size;
@@ -31,13 +31,13 @@ TEMPLATE_SERIALIZABLE
     )
 SERIALIZABLE_INIT()
 
-TEMPLATE_SERIALIZABLE
+TEMPLATE_SERIALIZABLE_LOAD
 (
-    load, string,
+    string,
     (template <typename CharType, typename TraitsType, typename AllocatorType>),
     std::basic_string<CharType, TraitsType, AllocatorType>
 )
-    SERIALIZATION
+    BIN_SERIALIZABLE
     (
         std::uint64_t size{};
         archive & size;

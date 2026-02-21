@@ -31,7 +31,7 @@ template <class ArchiveType, typename FieldType, typename enable = void>
 struct bitpack_t;
 
 template <class ArchiveType, typename FieldType>
-struct bitpack_t<ArchiveType, FieldType, typename std::enable_if<eightser::meta::is_oarchive<ArchiveType>::value>::type>
+struct bitpack_t<ArchiveType, FieldType, std::enable_if_t<eightser::meta::is_oarchive<ArchiveType>::value>>
 {
     ArchiveType& archive;
     FieldType data{};
@@ -51,7 +51,7 @@ struct bitpack_t<ArchiveType, FieldType, typename std::enable_if<eightser::meta:
 };
 
 template <class ArchiveType, typename FieldType>
-struct bitpack_t<ArchiveType, FieldType, typename std::enable_if<eightser::meta::is_iarchive<ArchiveType>::value>::type>
+struct bitpack_t<ArchiveType, FieldType, std::enable_if_t<eightser::meta::is_iarchive<ArchiveType>::value>>
 {
     ArchiveType& archive;
     FieldType data{};
