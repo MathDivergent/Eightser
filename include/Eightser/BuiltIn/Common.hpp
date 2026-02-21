@@ -35,7 +35,7 @@ SERIALIZABLE_INIT()
 CONDITIONAL_SERIALIZABLE_LOAD(enumerator, std::is_enum_v<S>)
     BIN_SERIALIZABLE
     (
-        typename std::underlying_type_t<S> buff{};
+        std::underlying_type_t<S> buff{};
         archive & buff;
 
         enumerator = static_cast<S>(buff);
