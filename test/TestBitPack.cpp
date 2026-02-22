@@ -36,7 +36,7 @@ TEST(Common, TestBitPack)
     {
         auto ar = eightser::iarchive(storage);
 
-        BitMaskObject object;
+        BitMaskObject object{};
 
         // BITPACK above will generate following equivalent code:
         {

@@ -62,14 +62,17 @@ CONDITIONAL_SERIALIZABLE_DECLARATION(xxeightser_is_pointer<S>::value)
 SERIALIZABLE_DECLARATION_INIT()
 
 CONDITIONAL_SERIALIZABLE_SAVELOAD(pointer, xxeightser_is_pointer<S>::value)
+    #ifdef EIGHTSER_PTRTRACK_ENABLE
     BIN_SERIALIZABLE
     (
-        #ifdef EIGHTSER_PTRTRACK_ENABLE
         ::eightser::track(archive, pointer);
-        #else
-        ::eightser::raw(archive, pointer);
-        #endif // EIGHTSER_PTRTRACK_ENABLE
     )
+    #else
+    BIN_SERIALIZABLE
+    (
+        ::eightser::raw(archive, pointer);
+    )
+    #endif // EIGHTSER_PTRTRACK_ENABLE
 SERIALIZABLE_INIT()
 
 #endif // EIGHTSER_BUILTIN_COMMON_HPP

@@ -4,7 +4,7 @@ using eightser::track;
 
 TEST(TestLibrary, TestTracking)
 {
-    static unsigned sv_i = 28932;
+    static int sv_i = 28932;
 
     std::vector<unsigned char> storage;
     {

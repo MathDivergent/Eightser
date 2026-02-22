@@ -36,7 +36,7 @@ namespace detail
 {
 
 template <class ArchiveType, typename SerializableType>
-void aggregate_impl(ArchiveType& archive, SerializableType& object, std::integral_constant<std::size_t, 0>) noexcept { /*pass*/ }
+void aggregate_impl(ArchiveType&, SerializableType&, std::integral_constant<std::size_t, 0>) noexcept { /*pass*/ }
 
 EIGHTSER_REPEAT(EIGHTSER_AGGREGATE_IMPLEMENTATION_GENERIC, 64)
 

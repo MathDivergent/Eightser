@@ -1,8 +1,7 @@
 #ifndef EIGHTSER_STANDARD_ANY_REGISTRY_HPP
 #define EIGHTSER_STANDARD_ANY_REGISTRY_HPP
 
-#ifdef EIGHTSER_RTTI_ENABLE
-#ifdef EIGHTSER_ANY_SUPPORT_ENABLE
+#if defined(EIGHTSER_RTTI_ENABLE) && defined(EIGHTSER_ANY_SUPPORT_ENABLE)
 
 #include <cstdint> // uint64_t
 
@@ -60,7 +59,6 @@ extern EIGHTSER_API any_registry_t* any_registry();
 
 } // namespace eightser
 
-#endif // EIGHTSER_ANY_SUPPORT_ENABLE
-#endif // EIGHTSER_RTTI_ENABLE
+#endif // EIGHTSER_RTTI_ENABLE && EIGHTSER_ANY_SUPPORT_ENABLE
 
 #endif // EIGHTSER_STANDARD_ANY_REGISTRY_HPP

@@ -48,7 +48,7 @@ std::uintptr_t tracking_key(ArchiveType& archive, PointerType& pointer)
 }
 
 template <class ArchiveType, typename PointerType, typename PointerHoldType>
-void native_assign(ArchiveType& archive, PointerType& pointer, PointerHoldType& address)
+void native_assign(ArchiveType&, PointerType& pointer, PointerHoldType& address)
 {
     if constexpr (meta::is_pointer_to_polymorphic<PointerType>::value)
     {
