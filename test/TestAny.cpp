@@ -1,4 +1,4 @@
-#if defined(EIGHTSER_RTTI_ENABLE) && defined(EIGHTSER_ANY_ENABLE)
+#if defined(EIGHTSER_RTTI_ENABLE) && defined(EIGHTSER_ANY_SUPPORT_ENABLE)
 
 #include <EightserTestingBase.hpp>
 
@@ -151,4 +151,4 @@ TEST(TestUtility, TestAny)
     }
 }
 
-#endif // EIGHTSER_RTTI_ENABLE && EIGHTSER_ANY_ENABLE
+#endif // EIGHTSER_RTTI_ENABLE && EIGHTSER_ANY_SUPPORT_ENABLE

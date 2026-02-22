@@ -10,9 +10,9 @@ TEST_SPACE()
 struct AggregateType
 {
     std::string string;
-    #if defined(EIGHTSER_RTTI_ENABLE) && defined(EIGHTSER_ANY_ENABLE)
+    #if defined(EIGHTSER_RTTI_ENABLE) && defined(EIGHTSER_ANY_SUPPORT_ENABLE)
     std::any data;
-    #endif // EIGHTSER_RTTI_ENABLE && EIGHTSER_ANY_ENABLE
+    #endif // EIGHTSER_RTTI_ENABLE && EIGHTSER_ANY_SUPPORT_ENABLE
     struct InnerType
     {
         char symbol;
@@ -47,9 +47,9 @@ TEST(TestCommon, TestAggregate)
     using eightser::serializable; // do possible serialize data assigned to any
 
     static std::string s_string = "Hello, Aggregate!";
-    #if defined(EIGHTSER_RTTI_ENABLE) && defined(EIGHTSER_ANY_ENABLE)
+    #if defined(EIGHTSER_RTTI_ENABLE) && defined(EIGHTSER_ANY_SUPPORT_ENABLE)
     static double s_data = 123.321;
-    #endif // EIGHTSER_RTTI_ENABLE && EIGHTSER_ANY_ENABLE
+    #endif // EIGHTSER_RTTI_ENABLE && EIGHTSER_ANY_SUPPORT_ENABLE
     static char s_symbol = 's';
     static float s_constant = 2.17f;
 
@@ -58,9 +58,9 @@ TEST(TestCommon, TestAggregate)
         AggregateType::InnerType inner { s_symbol, s_constant };
         AggregateType at {
             s_string,
-            #if defined(EIGHTSER_RTTI_ENABLE) && defined(EIGHTSER_ANY_ENABLE)
+            #if defined(EIGHTSER_RTTI_ENABLE) && defined(EIGHTSER_ANY_SUPPORT_ENABLE)
             serializable(s_data),
-            #endif // EIGHTSER_RTTI_ENABLE && EIGHTSER_ANY_ENABLE
+            #endif // EIGHTSER_RTTI_ENABLE && EIGHTSER_ANY_SUPPORT_ENABLE
             std::make_shared<AggregateType::InnerType>(inner)
         };
 
@@ -73,14 +73,14 @@ TEST(TestCommon, TestAggregate)
         auto ar = iarchive(storage);
         ar & at;
 
-        #if defined(EIGHTSER_RTTI_ENABLE) && defined(EIGHTSER_ANY_ENABLE)
+        #if defined(EIGHTSER_RTTI_ENABLE) && defined(EIGHTSER_ANY_SUPPORT_ENABLE)
         auto data = std::any_cast<double>(&at.data);
         ASSERT("inited.data", data != nullptr);
-        #endif // EIGHTSER_RTTI_ENABLE && EIGHTSER_ANY_ENABLE
+        #endif // EIGHTSER_RTTI_ENABLE && EIGHTSER_ANY_SUPPORT_ENABLE
 
         ASSERT("inited.inner", at.inner != nullptr);
 
-        #if defined(EIGHTSER_RTTI_ENABLE) && defined(EIGHTSER_ANY_ENABLE)
+        #if defined(EIGHTSER_RTTI_ENABLE) && defined(EIGHTSER_ANY_SUPPORT_ENABLE)
         EXPECT("value",
             at.string == s_string &&
             *data == s_data &&
@@ -91,7 +91,7 @@ TEST(TestCommon, TestAggregate)
             at.string == s_string &&
             at.inner->symbol == s_symbol && at.inner->constant == s_constant
         );
-        #endif // EIGHTSER_RTTI_ENABLE && EIGHTSER_ANY_ENABLE
+        #endif // EIGHTSER_RTTI_ENABLE && EIGHTSER_ANY_SUPPORT_ENABLE
     }
 
     static int s_bat_0 = 209;

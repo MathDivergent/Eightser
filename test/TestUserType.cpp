@@ -89,9 +89,9 @@ struct Product
 
 struct Printer : Product
 {
-    #if defined(EIGHTSER_RTTI_ENABLE) && defined(EIGHTSER_ANY_ENABLE)
+    #if defined(EIGHTSER_RTTI_ENABLE) && defined(EIGHTSER_ANY_SUPPORT_ENABLE)
     std::any owner;
-    #endif // EIGHTSER_ANY_ENABLE && EIGHTSER_RTTI_ENABLE
+    #endif // EIGHTSER_ANY_SUPPORT_ENABLE && EIGHTSER_RTTI_ENABLE
 };
 
 } // TEST_SPACE
@@ -110,7 +110,7 @@ SERIALIZABLE_DECLARATION(Printer)
 SERIALIZABLE_DECLARATION_INIT()
 
 SERIALIZABLE_SAVELOAD(self, Printer)
-    #if defined(EIGHTSER_RTTI_ENABLE) && defined(EIGHTSER_ANY_ENABLE)
+    #if defined(EIGHTSER_RTTI_ENABLE) && defined(EIGHTSER_ANY_SUPPORT_ENABLE)
     BIN_SERIALIZABLE
     (
         archive & hierarchy<Product>(self);
@@ -121,7 +121,7 @@ SERIALIZABLE_SAVELOAD(self, Printer)
     (
         archive & hierarchy<Product>(self);
     )
-    #endif // EIGHTSER_ANY_ENABLE && EIGHTSER_RTTI_ENABLE
+    #endif // EIGHTSER_ANY_SUPPORT_ENABLE && EIGHTSER_RTTI_ENABLE
 SERIALIZABLE_INIT()
 
 TEST(TestCommon, TestInheritance)
@@ -135,9 +135,9 @@ TEST(TestCommon, TestInheritance)
     s_p.series = 37868723;
     s_p.price = 1000;
 
-    #if defined(EIGHTSER_RTTI_ENABLE) && defined(EIGHTSER_ANY_ENABLE)
+    #if defined(EIGHTSER_RTTI_ENABLE) && defined(EIGHTSER_ANY_SUPPORT_ENABLE)
     s_p.owner = eightser::serializable(s_owner);
-    #endif // EIGHTSER_RTTI_ENABLE && EIGHTSER_ANY_ENABLE
+    #endif // EIGHTSER_RTTI_ENABLE && EIGHTSER_ANY_SUPPORT_ENABLE
 
     std::vector<unsigned char> storage;
     {
@@ -152,10 +152,10 @@ TEST(TestCommon, TestInheritance)
         auto ar = iarchive(storage);
         ar & p;
 
-        #if defined(EIGHTSER_RTTI_ENABLE) && defined(EIGHTSER_ANY_ENABLE)
+        #if defined(EIGHTSER_RTTI_ENABLE) && defined(EIGHTSER_ANY_SUPPORT_ENABLE)
         auto owner = std::any_cast<std::string>(&p.owner);
         EXPECT("inheritance.inited", owner != nullptr && *owner == s_owner);
-        #endif // EIGHTSER_RTTI_ENABLE && EIGHTSER_ANY_ENABLE
+        #endif // EIGHTSER_RTTI_ENABLE && EIGHTSER_ANY_SUPPORT_ENABLE
 
         EXPECT("inheritance.value",
             p.name == s_p.name && p.series == s_p.series && p.price == s_p.price);
