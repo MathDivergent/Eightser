@@ -142,8 +142,6 @@ endif()
 
 # [[Tests][Configurations]]
 if(EIGHTSER_BUILD_TEST_LIBS)
-    target_compile_options(EightserTests PRIVATE "-Wno-uninitialized")
-
     if(LINUX OR APPLE)
         set_target_properties(EightserTests PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE INSTALL_RPATH "${EIGHTSER_RPATH}" ${EIGHTSER_VISIBILITY_HIDDEN})
     endif()
@@ -151,6 +149,8 @@ if(EIGHTSER_BUILD_TEST_LIBS)
     if(EIGHTSER_WARNING_FLAGS)
         target_compile_options(EightserTests PRIVATE ${EIGHTSER_WARNING_FLAGS})
     endif()
+
+    target_compile_options(EightserTests PRIVATE "-Wno-uninitialized")
 endif()
 
 
