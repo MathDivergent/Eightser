@@ -3,9 +3,10 @@ cmake_minimum_required(VERSION 3.16)
 
 project(Eightser)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_SHARED_LIBRARY_PREFIX "")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Werror")
 
 
 # [[Module][Options]]
@@ -133,6 +134,8 @@ endif()
 
 # [[Tests][Configurations]]
 if(EIGHTSER_BUILD_TEST_LIBS)
+    target_compile_options(EightserTests PRIVATE -Wno-uninitialized)
+
     if(LINUX OR APPLE)
         set_target_properties(EightserTests PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE INSTALL_RPATH "${EIGHTSER_RPATH}" ${EIGHTSER_VISIBILITY_HIDDEN})
     endif()

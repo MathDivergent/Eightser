@@ -15,7 +15,7 @@ struct BitMaskObject
 
 } // namespace TEST_SPACE
 
-TEST(Common, TestBitPack)
+TEST(TestCommon, TestBitPack)
 {
     static unsigned int s_c0 = 7;
     static unsigned int s_c1 = 1;
@@ -36,7 +36,7 @@ TEST(Common, TestBitPack)
     {
         auto ar = eightser::iarchive(storage);
 
-        BitMaskObject object;
+        BitMaskObject object{};
 
         // BITPACK above will generate following equivalent code:
         {

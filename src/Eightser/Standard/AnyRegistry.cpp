@@ -1,5 +1,4 @@
-#ifdef EIGHTSER_RTTI_ENABLE
-#ifdef EIGHTSER_ANY_SUPPORT_ENABLE
+#if defined(EIGHTSER_RTTI_ENABLE) && defined(EIGHTSER_ANY_SUPPORT_ENABLE)
 
 #include <Eightser/Standard/AnyRegistry.hpp>
 
@@ -23,5 +22,4 @@ any_registry_t* any_registry()
 
 } // namespace eightser
 
-#endif // EIGHTSER_ANY_SUPPORT_ENABLE
-#endif // EIGHTSER_RTTI_ENABLE
+#endif // EIGHTSER_RTTI_ENABLE && EIGHTSER_ANY_SUPPORT_ENABLE

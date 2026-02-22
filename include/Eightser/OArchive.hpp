@@ -45,7 +45,7 @@ public:
 
         #ifdef EIGHTSER_DEBUG
         template <typename PointerType>
-        bool is_mixed(std::uintptr_t refer_key, PointerType const& pointer) const noexcept
+        bool is_mixed(std::uintptr_t refer_key, PointerType const&) const noexcept
         {
             using pointer_traits = memory::pointer_traits<PointerType>;
             using pointer_hold_type = typename pointer_traits::template pointer_template<INSTANTIABLE_TYPE>;

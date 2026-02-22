@@ -14,9 +14,9 @@ Both classes can be equipped with additional helper classes via template paramet
 A wrapper for streams will help you flexibly configure the process of writing and reading data.
 The type registrar will allow you to properly serialize and deserialize polymorphic and abstract types.
 
-A library implemented purely in C++17.
+A library implemented purely in C++20.
 
-See last stable library version 4.0.0 [here](https://github.com/MathDivergent/Eightser/releases).
+See last stable library version 4.1.0 [here](https://github.com/MathDivergent/Eightser/releases).
 
 ## Functional:
 

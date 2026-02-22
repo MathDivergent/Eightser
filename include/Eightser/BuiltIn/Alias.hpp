@@ -70,14 +70,13 @@ TEMPLATE_SERIALIZABLE_SAVE(alias, template <typename ElementType>, ::eightser::a
 SERIALIZABLE_INIT()
 
 TEMPLATE_SERIALIZABLE_LOAD(alias, template <typename ElementType>, ::eightser::alias_t<ElementType>)
+    #ifdef EIGHTSER_GARBAGE_CHECK_ENABLE
+    if (alias.is_refer())
+        throw "The read alias_t must be null.";
+    #endif // EIGHTSER_GARBAGE_CHECK_ENABLE
     BIN_SERIALIZABLE
     (
         using pointer_hold_type = INSTANTIABLE_TYPE*; // need to overload tracking
-
-        #ifdef EIGHTSER_GARBAGE_CHECK_ENABLE
-        if (alias.is_refer())
-            throw "The read alias_t must be null.";
-        #endif // EIGHTSER_GARBAGE_CHECK_ENABLE
 
         std::uintptr_t key{};
         archive & key;
