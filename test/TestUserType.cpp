@@ -91,7 +91,7 @@ struct Printer : Product
 {
     #if defined(EIGHTSER_RTTI_ENABLE) && defined(EIGHTSER_ANY_SUPPORT_ENABLE)
     std::any owner;
-    #endif // EIGHTSER_ANY_SUPPORT_ENABLE && EIGHTSER_RTTI_ENABLE
+    #endif // EIGHTSER_RTTI_ENABLE && EIGHTSER_ANY_SUPPORT_ENABLE
 };
 
 } // TEST_SPACE
@@ -121,7 +121,7 @@ SERIALIZABLE_SAVELOAD(self, Printer)
     (
         archive & hierarchy<Product>(self);
     )
-    #endif // EIGHTSER_ANY_SUPPORT_ENABLE && EIGHTSER_RTTI_ENABLE
+    #endif // EIGHTSER_RTTI_ENABLE && EIGHTSER_ANY_SUPPORT_ENABLE
 SERIALIZABLE_INIT()
 
 TEST(TestCommon, TestInheritance)
