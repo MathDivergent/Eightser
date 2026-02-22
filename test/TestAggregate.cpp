@@ -121,7 +121,7 @@ TEST(TestCommon, TestAggregate)
 
     storage.clear();
     {
-        DerivedAggregateType dat { s_b_data, s_b_id, s_d_state };
+        DerivedAggregateType dat { { s_b_data, s_b_id }, s_d_state };
 
         auto ar = oarchive(storage);
         ar & dat;
