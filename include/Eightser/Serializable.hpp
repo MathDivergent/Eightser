@@ -102,12 +102,9 @@ template <typename SerializableType> void serializable()
     static_assert(std::negation_v<meta::is_unsupported<SerializableType>>, "The 'SerializableType' is an unsupported type for serialization.");
 
     instantiable_registry()->add<SerializableType>();
-
-    #ifdef EIGHTSER_RTTI_ENABLE
-    #ifdef EIGHTSER_ANY_SUPPORT_ENABLE
+    #if defined(EIGHTSER_RTTI_ENABLE) && defined(EIGHTSER_ANY_SUPPORT_ENABLE)
     any_registry()->add<SerializableType>();
-    #endif // EIGHTSER_ANY_SUPPORT_ENABLE
-    #endif // EIGHTSER_RTTI_ENABLE
+    #endif // EIGHTSER_RTTI_ENABLE && EIGHTSER_ANY_SUPPORT_ENABLE
 }
 
 template <typename SerializableType> SerializableType&& serializable(SerializableType&& object)
