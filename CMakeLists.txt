@@ -6,13 +6,12 @@ project(Eightser)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_SHARED_LIBRARY_PREFIX "")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Werror")
 
 
 # [[Module][Options]]
 option(EIGHTSER_BUILD_SHARED_LIBS "Build shared libraies by Default" ON)
 option(EIGHTSER_FULLY_ENABLE "Build with fully by Default" OFF)
-option(EIGHTSER_RTTI_ENABLE "Build with RTTI by Default" ON)
+option(EIGHTSER_RTTI_ENABLE "Build with RTTI by Default" ON) # сompletely global
 option(EIGHTSER_UNION_ENABLE "Build with union support by Default" ON)
 option(EIGHTSER_PTRTRACK_ENABLE "Build with pointer track by Default" ON)
 option(EIGHTSER_FILESTREAM_ENABLE "Build with std::fstream by Default" ON)
@@ -21,6 +20,7 @@ option(EIGHTSER_ANY_SUPPORT_ENABLE "Build with std::any support by Default" ON)
 option(EIGHTSER_GARBAGE_CHECK_ENABLE "Build with garbage check by Default" ON)
 option(EIGHTSER_DEBUG "Build with diagnostic extentions by Default" OFF)
 option(EIGHTSER_BUILD_TEST_LIBS "Build testing libraies by Default" OFF)
+option(EIGHTSER_WARNING_FLAGS_ENABLE "Build with warning checking by Default" ON)
 
 
 # [[Module][Defaults]]
@@ -40,6 +40,10 @@ endif()
 
 if(LINUX OR APPLE)
     set(EIGHTSER_VISIBILITY_HIDDEN C_VISIBILITY_PRESET hidden CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN ON)
+endif()
+
+if(EIGHTSER_WARNING_FLAGS_ENABLE)
+    set(EIGHTSER_WARNING_FLAGS "-Wall" "-Wextra" "-Wpedantic" "-Werror")
 endif()
 
 
@@ -77,10 +81,10 @@ if(EIGHTSER_FULLY_ENABLE)
 endif()
 
 if(EIGHTSER_RTTI_ENABLE)
-    target_compile_options(Eightser PUBLIC -frtti)
+    target_compile_options(Eightser PUBLIC "-frtti")
     target_compile_definitions(Eightser PUBLIC "EIGHTSER_RTTI_ENABLE")
 else()
-    target_compile_options(Eightser PUBLIC -fno-rtti)
+    target_compile_options(Eightser PUBLIC "-fno-rtti")
 endif()
 
 if(EIGHTSER_UNION_ENABLE)
@@ -111,6 +115,10 @@ if(EIGHTSER_DEBUG)
     target_compile_definitions(Eightser PUBLIC "EIGHTSER_DEBUG")
 endif()
 
+if(EIGHTSER_WARNING_FLAGS)
+    target_compile_options(Eightser PRIVATE ${EIGHTSER_WARNING_FLAGS})
+endif()
+
 
 # [[Tests][Defaults]]
 if(EIGHTSER_BUILD_TEST_LIBS)
@@ -134,11 +142,15 @@ endif()
 
 # [[Tests][Configurations]]
 if(EIGHTSER_BUILD_TEST_LIBS)
-    target_compile_options(EightserTests PRIVATE -Wno-uninitialized)
-
     if(LINUX OR APPLE)
         set_target_properties(EightserTests PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE INSTALL_RPATH "${EIGHTSER_RPATH}" ${EIGHTSER_VISIBILITY_HIDDEN})
     endif()
+
+    if(EIGHTSER_WARNING_FLAGS)
+        target_compile_options(EightserTests PRIVATE ${EIGHTSER_WARNING_FLAGS})
+    endif()
+
+    target_compile_options(EightserTests PRIVATE "-Wno-uninitialized")
 endif()
 
 
