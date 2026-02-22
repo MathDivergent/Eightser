@@ -177,3 +177,142 @@ archive(obj_0, ..., obj_n);
 ```
 ## License:
 This library is an open source project licensed under: [MIT](https://opensource.org/licenses/MIT).
+[   OK   ] TestMemory::TestReferenceCycles.std::shared_ptr<cycle>.inited
+[   OK   ] TestMemory::TestReferenceCycles.std::shared_ptr<cycle>.use_count
+[   OK   ] TestMemory::TestReferenceCycles.std::shared_ptr<cycle>.value
+[   OK   ] TestMemory::TestReferenceCycles.std::shared_ptr<self>.inited
+[   OK   ] TestMemory::TestReferenceCycles.std::shared_ptr<self>.use_count
+[   OK   ] TestMemory::TestReferenceCycles.std::shared_ptr<self>.value
+[   OK   ] TestMemory::TestSharedAndWeakPtr.std::shared_ptr<>.inited
+[   OK   ] TestMemory::TestSharedAndWeakPtr.std::weak_ptr<>.inited
+[   OK   ] TestMemory::TestSharedAndWeakPtr.std::shared_ptr<>.use_count
+[   OK   ] TestMemory::TestSharedAndWeakPtr.std::weak_ptr<>.use_count
+[   OK   ] TestMemory::TestSharedAndWeakPtr.std::shared_ptr<>.value
+[   OK   ] TestMemory::TestSharedAndWeakPtr.std::weak_ptr<>.value
+[   OK   ] TestMemory::TestWeakPtr.std::weak_ptr<>.inited
+[   OK   ] TestMemory::TestWeakPtr.std::weak_ptr<>.value
+[   OK   ] TestMemory::TestWeakPtr.std::weak_ptr<polymorphic>.inited
+[   OK   ] TestMemory::TestWeakPtr.std::weak_ptr<polymorphic>.value
+[   OK   ] TestMemory::TestSharedPtr.std::shared_ptr<polymorphic>.inited
+[   OK   ] TestMemory::TestSharedPtr.std::shared_ptr<polymorphic>.use_count
+[   OK   ] TestMemory::TestSharedPtr.std::shared_ptr<polymorphic>.pure
+[   OK   ] TestMemory::TestSharedPtr.std::shared_ptr<polymorphic>.value
+[   OK   ] TestMemory::TestUniquePtr.std::unique_ptr<>.inited
+[   OK   ] TestMemory::TestUniquePtr.std::unique_ptr<>.value
+[   OK   ] TestMemory::TestUniquePtr.std::unique_ptr<polymorphic>.inited parent
+[   OK   ] TestMemory::TestUniquePtr.std::unique_ptr<polymorphic>.inited child
+[   OK   ] TestMemory::TestUniquePtr.std::unique_ptr<polymorphic>.value
+[   OK   ] TestLibrary::TestTracking.data track.data value
+[   OK   ] TestLibrary::TestTracking.data track.pointer inited
+[   OK   ] TestLibrary::TestTracking.data track.pointer value
+[   OK   ] TestLibrary::TestTracking.data tarck.value
+[   OK   ] TestLibrary::TestPolymorphicArchive.value
+[   OK   ] TestLibrary::TestPolymorphicArchive.bad oarchive
+[   OK   ] TestLibrary::TestPolymorphicArchive.bad iarchive
+[   OK   ] TestLibrary::TestAbstract.inited
+[   OK   ] TestLibrary::TestAbstract.traits
+[   OK   ] TestLibrary::TestStreamWrapper.char storage
+[   OK   ] TestLibrary::TestStreamWrapper.storage converting
+[   OK   ] TestLibrary::TestExportInstantiable.export instantiable key.traits
+[   OK   ] TestLibrary::TestExportInstantiable.export instantiable.equivalent
+[   OK   ] TestLibrary::TestExportInstantiable.instantiable runtime key.traits
+[   OK   ] TestLibrary::TestNoMacro.no-macro.value
+[   OK   ] TestLibrary::TestNoMacro.no-macro polymorphic.inited
+[   OK   ] TestLibrary::TestNoMacro.no-macro polymorphic.value
+[   OK   ] TestLibrary::TestPartition.saveload partition.inited
+[   OK   ] TestLibrary::TestPartition.saveload partition.value
+[   OK   ] TestLibrary::TestNoTraits.no-traits.inited
+[   OK   ] TestLibrary::TestNoTraits.no-traits.value
+[   OK   ] TestLibrary::TestAggregateOverload.serialization as non-aggregate.
+[   OK   ] TestLibrary::TestAggregateOverload.serialization as aggregate.
+[   OK   ] TestLibrary::TestInstantiableRegistry.same polymorphic key
+[   OK   ] TestLibrary::TestInstantiableRegistry.non-instantiable type
+[   OK   ] TestLibrary::TestInstantiableRegistry.clone non-instantiable raw
+[   OK   ] TestLibrary::TestInstantiableRegistry.clone non-instantiable shared
+[   OK   ] TestLibrary::TestInheritance.write.hierarchy count
+[   OK   ] TestLibrary::TestInheritance.read.inited
+[   OK   ] TestLibrary::TestInheritance.read.hierarchy count
+[   OK   ] TestLibrary::TestAccess.non-public inheritance.value
+[   OK   ] TestLibrary::TestAccess.public instantiable
+[   OK   ] TestLibrary::TestAccess.non-public instantiable
+[   OK   ] TestLibrary::TestSwapEndian.value.read
+[   OK   ] TestLibrary::TestSwapEndian.value.read.endian swap
+[   OK   ] TestLibrary::TestSwapEndian.value.write
+[   OK   ] TestLibrary::TestSwapEndian.value.write.endian swap
+[   OK   ] TestLibrary::TestValidation.bad data track
+[   OK   ] TestLibrary::TestValidation.garbage ptr.read
+[   OK   ] TestLibrary::TestValidation.mixed track.raw shared
+[   OK   ] TestLibrary::TestValidation.mixed track.shared raw
+[   OK   ] TestDemo::TestExample.inited
+[   OK   ] TestDemo::TestExample.value
+[   OK   ] TestSTLAdapter::TestStack.std::stack<>
+[   OK   ] TestSTLAdapter::TestQueue.std::queue<>
+[   OK   ] TestSTLAdapter::TestPriorityQueue.std::priority_queue<>
+[   OK   ] TestNumeric::TestValarray.std::valarray<>
+[   OK   ] TestNumeric::TestComplex.std::complex<>
+[   OK   ] TestUtility::TestVariant.std::variant<>.index
+[   OK   ] TestUtility::TestVariant.std::variant<>.get
+[   OK   ] TestUtility::TestVariant.std::variant<monostate>.index
+[   OK   ] TestUtility::TestTuple.std::tuple<empty>
+[   OK   ] TestUtility::TestTuple.std::tuple<>
+[   OK   ] TestUtility::TestPair.std::pair<>
+[   OK   ] TestUtility::TestOptional.std::optional<>.nullopt
+[   OK   ] TestUtility::TestOptional.std::optional<>.has_value
+[   OK   ] TestUtility::TestOptional.std::optional<>.value
+[   OK   ] TestUtility::TestOptional.std::optional<atomic>.has_value
+[   OK   ] TestUtility::TestOptional.std::optional<atomic>.value
+[   OK   ] TestUtility::TestBitset.std::bitset<>.test
+[   OK   ] TestUtility::TestBitset.std::bitset<>
+[   OK   ] TestCommon::TestUnion.union binary
+[   OK   ] TestCommon::TestUnion.union
+[   OK   ] TestCommon::TestUserType.Struct
+[   OK   ] TestCommon::TestPolymorphic.polymorphic.inited
+[   OK   ] TestCommon::TestPolymorphic.polymorphic.traits
+[   OK   ] TestCommon::TestPolymorphic.polymorphic.value
+[   OK   ] TestCommon::TestPolymorphic.polymorphic.derived inited
+[   OK   ] TestCommon::TestPolymorphic.polymorphic.derived traits
+[   OK   ] TestCommon::TestPolymorphic.polymorphic.derived value
+[   OK   ] TestCommon::TestEnum.Enum
+[   OK   ] TestCommon::TestEnum.Scoped Enum
+[   OK   ] TestCommon::TestNumber.int
+[   OK   ] TestCommon::TestNumber.long long
+[   OK   ] TestCommon::TestNumber.float
+[   OK   ] TestCommon::TestNumber.short
+[   OK   ] TestCommon::TestNumber.double
+[   OK   ] TestCommon::TestNumber.char
+[   OK   ] TestCommon::TestNumber.int32_t
+[   OK   ] TestCommon::TestNumber.wchar_t
+[   OK   ] TestCommon::TestDynamicArray.dynamic array.inited
+[   OK   ] TestCommon::TestDynamicArray.dynamic array.size
+[   OK   ] TestCommon::TestDynamicArray.dynamic array.inited inner
+[   OK   ] TestCommon::TestDynamicArray.dynamic array.value
+[   OK   ] TestCommon::TestAlias.inited
+[   OK   ] TestCommon::TestAlias.value
+[   OK   ] TestCommon::TestAlias.polymorphic inited
+[   OK   ] TestCommon::TestAlias.polymorphic value
+[   OK   ] TestCommon::TestInheritance.inheritance.value
+[   OK   ] TestCommon::TestAggregate.inited.inner
+[   OK   ] TestCommon::TestAggregate.value
+[   OK   ] TestCommon::TestAggregate.big.value
+[   OK   ] TestCommon::TestAggregate.inheritance.value
+[   OK   ] TestConcurrency::TestAtomic.std::atomic<>
+[   OK   ] TestSTL::TestVector.std::vector<bool>
+[   OK   ] TestSTL::TestVector.std::vector<>
+[   OK   ] TestSTL::TestSet.std::set<>
+[   OK   ] TestSTL::TestSet.std::unordered_set<>
+[   OK   ] TestSTL::TestSet.std::multiset<>
+[   OK   ] TestSTL::TestSet.std::unordered_multiset<>
+[   OK   ] TestSTL::TestDeque.std::deque<>
+[   OK   ] TestSTL::TestMap.std::map<>
+[   OK   ] TestSTL::TestMap.std::unordered_map<>
+[   OK   ] TestSTL::TestMap.std::multimap<>
+[   OK   ] TestSTL::TestMap.std::unordered_multimap<>
+[   OK   ] TestSTL::TestString.std::string
+[   OK   ] TestSTL::TestString.std::wstring
+[   OK   ] TestSTL::TestString.std::u16string
+[   OK   ] TestSTL::TestString.std::u32string
+[   OK   ] TestSTL::TestList.std::list<>
+[   OK   ] TestSTL::TestForwardList.std::forward_list<>
+[   OK   ] TestSTL::TestArray.std::array<>
+[   OK   ] Common::TestBitPack.inited
+[   OK   ] Common::TestBitPack.value
