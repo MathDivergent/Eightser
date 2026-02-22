@@ -34,7 +34,7 @@ std::uintptr_t tracking_key(ArchiveType& archive, PointerType& pointer)
 
 template <class ArchiveType, typename PointerType,
           EIGHTSER_REQUIRES(meta::is_iarchive<ArchiveType>::value)>
-std::uintptr_t tracking_key(ArchiveType& archive, PointerType& pointer)
+std::uintptr_t tracking_key(ArchiveType& archive, [[maybe_unused]] PointerType& pointer)
 {
     #ifdef EIGHTSER_DEBUG
     if (pointer != nullptr)
