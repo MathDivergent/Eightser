@@ -42,9 +42,7 @@ if(LINUX OR APPLE)
     set(EIGHTSER_VISIBILITY_HIDDEN C_VISIBILITY_PRESET hidden CXX_VISIBILITY_PRESET hidden VISIBILITY_INLINES_HIDDEN ON)
 endif()
 
-if(EIGHTSER_WARNING_FLAGS_ENABLE)
-    set(EIGHTSER_WARNING_FLAGS "-Wall" "-Wextra" "-Wpedantic" "-Werror")
-endif()
+set(EIGHTSER_WARNING_FLAGS "-Wall" "-Wextra" "-Wpedantic" "-Werror")
 
 
 # [[Launcher][Defaults]]
@@ -115,7 +113,7 @@ if(EIGHTSER_DEBUG)
     target_compile_definitions(Eightser PUBLIC "EIGHTSER_DEBUG")
 endif()
 
-if(EIGHTSER_WARNING_FLAGS)
+if(EIGHTSER_WARNING_FLAGS_ENABLE)
     target_compile_options(Eightser PRIVATE ${EIGHTSER_WARNING_FLAGS})
 endif()
 
@@ -146,7 +144,7 @@ if(EIGHTSER_BUILD_TEST_LIBS)
         set_target_properties(EightserTests PROPERTIES BUILD_WITH_INSTALL_RPATH TRUE INSTALL_RPATH "${EIGHTSER_RPATH}" ${EIGHTSER_VISIBILITY_HIDDEN})
     endif()
 
-    if(EIGHTSER_WARNING_FLAGS)
+    if(EIGHTSER_WARNING_FLAGS_ENABLE)
         target_compile_options(EightserTests PRIVATE ${EIGHTSER_WARNING_FLAGS})
     endif()
 
