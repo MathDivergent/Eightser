@@ -10,7 +10,7 @@
     #define EIGHTSER_ARCHIVE_TRAIT_MAX_KEY_SIZE 4
 #endif // EIGHTSER_ARCHIVE_TRAIT_MAX_KEY_SIZE
 
-#define VISIBLE_SERIALIZABLE_ARCHIVE_DECLARATION(module_api, archive_key, ...) \
+#define VISIBLE_SERIALIZABLE_ARCHIVE_DECLARATION(module_api, archive_key, ... /*archive_type*/) \
     extern template class EIGHTSER_DEPAREN(module_api) __VA_ARGS__; \
     template <> struct xxeightser_archive_traits<__VA_ARGS__> { \
         static constexpr auto key = ::xxeightser_archive_traits_key_type(archive_key); \
@@ -19,9 +19,9 @@
         using type = __VA_ARGS__; \
     };
 
-#define SERIALIZABLE_ARCHIVE_DECLARATION(archive_key, ...) VISIBLE_SERIALIZABLE_ARCHIVE_DECLARATION((/*no module_api*/), archive_key, __VA_ARGS__)
+#define SERIALIZABLE_ARCHIVE_DECLARATION(archive_key, ... /*archive_type*/) VISIBLE_SERIALIZABLE_ARCHIVE_DECLARATION((/*no module_api*/), archive_key, __VA_ARGS__)
 
-#define SERIALIZABLE_ARCHIVE(...) template class __VA_ARGS__;
+#define SERIALIZABLE_ARCHIVE(... /*archive_type*/) template class __VA_ARGS__;
 
 namespace eightser
 {
