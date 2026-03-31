@@ -16,7 +16,7 @@ The type registrar will allow you to properly serialize and deserialize polymorp
 
 A library implemented purely in C++20.
 
-See last stable library version 4.2.0 [here](https://github.com/MathDivergent/Eightser/releases).
+See last stable library version 4.3.0 [here](https://github.com/MathDivergent/Eightser/releases).
 
 ## Functional:
 
@@ -27,7 +27,7 @@ See last stable library version 4.2.0 [here](https://github.com/MathDivergent/Ei
 - Bit fields
 - Little-endian, Big-endian
 
-See full list [here](https://github.com/MathDivergent/Eightser/tree/master/include/Eightser/BuiltIn).
+See full list [here](https://github.com/MathDivergent/Eightser/tree/main/include/Eightser/BuiltIn).
 
 ### Data tracking:
 - Raw pointers
@@ -38,7 +38,7 @@ See full list [here](https://github.com/MathDivergent/Eightser/tree/master/inclu
 - C++11: string, vector, map, and many others
 - C++17: any, optional, variant
 
-See full list [here](https://github.com/MathDivergent/Eightser/tree/master/include/Eightser/Standard).
+See full list [here](https://github.com/MathDivergent/Eightser/tree/main/include/Eightser/Standard).
 
 ### Serialization of user classes:
 - Aggregate (since C++17)
@@ -48,10 +48,10 @@ See full list [here](https://github.com/MathDivergent/Eightser/tree/master/inclu
 - Virtual Inheritance
 
 ## Auto Tests:
-See library testing [here](https://github.com/MathDivergent/Eightser/tree/master/test).
+See library testing [here](https://github.com/MathDivergent/Eightser/tree/main/test).
 
 ## Quick start:
-Warning! This is a simple example. You can see more examples [here](https://github.com/MathDivergent/Eightser/tree/master/test).
+Warning! This is a simple example. You can see more examples [here](https://github.com/MathDivergent/Eightser/tree/main/test).
 
 Preparing:
 
@@ -157,7 +157,7 @@ Handbook db; // some other clear db
 auto ar = eightser::iarchive(storage);
 ar & db;
 ```
-See full code here: [TestExample.cpp](https://github.com/MathDivergent/Eightser/tree/master/test/TestExample.cpp)
+See full code here: [TestExample.cpp](https://github.com/MathDivergent/Eightser/tree/main/test/TestExample.cpp)
 
 ### Notes:
 For ```oarchive_t``` objects, you may also using overloaded ```operator <<``` instead ```operator &```
