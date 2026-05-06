@@ -18,7 +18,7 @@ option(EIGHTSER_FILESTREAM_ENABLE "Build with std::fstream by Default" ON)
 option(EIGHTSER_TYPE_PORTABLE_ENABLE "Build with type portable by Default" ON)
 option(EIGHTSER_ANY_SUPPORT_ENABLE "Build with std::any support by Default" ON)
 option(EIGHTSER_GARBAGE_CHECK_ENABLE "Build with garbage check by Default" ON)
-option(EIGHTSER_DEBUG "Build with diagnostic extentions by Default" OFF)
+option(EIGHTSER_DEBUG "Build with diagnostic extensions by Default" OFF)
 option(EIGHTSER_BUILD_TEST_LIBS "Build testing libraies by Default" OFF)
 option(EIGHTSER_WARNING_FLAGS_ENABLE "Build with warning checking by Default" ON)
 
