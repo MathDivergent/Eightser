@@ -15,7 +15,7 @@ namespace eightser
 
 struct EIGHTSER_API instantiable_t
 {
-    virtual ~instantiable_t() = default;
+    virtual ~instantiable_t();
 };
 
 template <typename PointerType>
