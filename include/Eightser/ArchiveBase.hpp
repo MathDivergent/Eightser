@@ -22,11 +22,10 @@ constexpr xxeightser_archive_type_key_type json = 2;
 
 struct EIGHTSER_API ioarchive_t
 {
-    ioarchive_t(::xxeightser_archive_traits_key_type trait, ::xxeightser_archive_type_key_type type, bool saveload)
-        : trait(trait), type(type), saveload(saveload) {}
+    ioarchive_t(::xxeightser_archive_traits_key_type trait, ::xxeightser_archive_type_key_type type, bool saveload);
 
     #ifdef EIGHTSER_DEBUG
-    virtual ~ioarchive_t() = default;
+    virtual ~ioarchive_t();
     #endif // EIGHTSER_DEBUG
 
     std::uint64_t trait : sizeof(xxeightser_archive_traits_key_type) * 8;
