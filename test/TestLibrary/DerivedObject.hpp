@@ -1,6 +1,8 @@
 #ifndef DERIVED_OBJECT_HPP
 #define DERIVED_OBJECT_HPP
 
+#include <string> // hash
+
 #include <EightserTestingBase.hpp>
 #include "BaseObject.hpp"
 
@@ -13,7 +15,7 @@ SERIALIZABLE_DECLARATION(DerivedObject)
     #ifdef EIGHTSER_RTTI_ENABLE
     INSTANTIABLE(S)
     #else
-    INSTANTIABLE_KEY(EIGHTSER_STRING_HASH("DerivedObject"), S)
+    INSTANTIABLE_KEY(std::hash<std::string>{}("DerivedObject"), S)
     #endif // EIGHTSER_RTTI_ENABLE
 SERIALIZABLE_DECLARATION_INIT()
 

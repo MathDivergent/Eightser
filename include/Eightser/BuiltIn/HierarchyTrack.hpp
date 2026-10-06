@@ -30,7 +30,7 @@ void virtual_base(ArchiveType& archive, DerivedType& object)
     auto address = hold_type_erasure(std::addressof(object));
 
     auto const key = reinterpret_cast<std::uintptr_t>(address);
-    auto const traits = EIGHTSER_TYPE_HASH(BaseType);
+    auto const traits = ::xxeightser_type_hash_t<BaseType>{}();
 
     auto& is_tracking = archive.tracking().hierarchy()[key][traits];
     if (not is_tracking)
@@ -39,8 +39,8 @@ void virtual_base(ArchiveType& archive, DerivedType& object)
         base<BaseType>(archive, object);
     }
     #else
-    if (EIGHTSER_EXPRESSION_HASH(object) == EIGHTSER_TYPE_HASH(DerivedType))
-        base<Base>(archive, object);
+    if (::xxeightser_expression_hash_t<DerivedType>{}(object) == ::xxeightser_type_hash_t<DerivedType>{}())
+        base<BaseType>(archive, object);
     #endif // EIGHTSER_PTRTRACK_ENABLE
 }
 

@@ -76,7 +76,7 @@ void strict(ArchiveType& archive, PointerType& pointer)
 
     if constexpr (meta::is_pointer_to_polymorphic<PointerType>::value)
     {
-        auto const hash = EIGHTSER_EXPRESSION_HASH(*pointer);
+        auto const hash = ::xxeightser_expression_hash_t<typename memory::pointer_traits<PointerType>::element_type>{}(*pointer);
         auto const& proxy = instantiable_registry()->dynamic_all.at(hash);
 
         auto key = proxy.key;

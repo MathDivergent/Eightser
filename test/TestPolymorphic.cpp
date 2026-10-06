@@ -37,7 +37,7 @@ TEMPLATE_SERIALIZABLE_DECLARATION(template <class SomeType>, Base<SomeType>)
     #ifdef EIGHTSER_RTTI_ENABLE
     INSTANTIABLE(S)
     #else
-    INSTANTIABLE_KEY(EIGHTSER_STRING_HASH("Base<std::string>"), S) // in real project we should use reflection to get name or hash from type
+    INSTANTIABLE_KEY(std::hash<std::string>{}("Base<std::string>"), S) // in real project we should use reflection to get name or hash from type
     #endif // EIGHTSER_RTTI_ENABLE
 SERIALIZABLE_DECLARATION_INIT()
 
@@ -50,7 +50,7 @@ SERIALIZABLE_DECLARATION(internal::Derived)
     #ifdef EIGHTSER_RTTI_ENABLE
     INSTANTIABLE(S)
     #else
-    INSTANTIABLE_KEY(EIGHTSER_STRING_HASH("internal::Derived"), S)
+    INSTANTIABLE_KEY(std::hash<std::string>{}("internal::Derived"), S)
     #endif // EIGHTSER_RTTI_ENABLE
 SERIALIZABLE_DECLARATION_INIT()
 
@@ -59,8 +59,8 @@ SERIALIZABLE_SAVELOAD(self, internal::Derived)
     archive & self.value;
 SERIALIZABLE_INIT()
 
-// INSTANTIABLE(Base<double>) // same as INSTANTIABLE_KEY(EIGHTSER_TYPE_HASH(Base<double>), Base<double>)
-// INSTANTIABLE_KEY(EIGHTSER_STRING_HASH("Other Derived"), internal::Derived) // possible use
+// INSTANTIABLE(Base<double>) // same as INSTANTIABLE_KEY(::xxeightser_type_hash_t<Base<double>>{}(), Base<double>)
+// INSTANTIABLE_KEY(std::hash<std::string>{}("Other Derived"), internal::Derived) // possible use
 
 TEST(TestCommon, TestPolymorphic)
 {
@@ -93,7 +93,7 @@ TEST(TestCommon, TestPolymorphic)
         ar & p & c;
 
         ASSERT("polymorphic.inited", p != nullptr);
-        ASSERT("polymorphic.traits", EIGHTSER_TYPE_HASH(Parent) == EIGHTSER_EXPRESSION_HASH(*p));
+        ASSERT("polymorphic.traits", ::xxeightser_type_hash_t<Parent>{}() == ::xxeightser_expression_hash_t<Parent>{}(*p));
 
         EXPECT("polymorphic.value", p->data == sv_p_d);
 
@@ -104,7 +104,7 @@ TEST(TestCommon, TestPolymorphic)
         #endif // EIGHTSER_RTTI_ENABLE
 
         ASSERT("polymorphic.derived inited", d != nullptr);
-        ASSERT("polymorphic.derived traits", EIGHTSER_TYPE_HASH(Child) == EIGHTSER_EXPRESSION_HASH(*c));
+        ASSERT("polymorphic.derived traits", ::xxeightser_type_hash_t<Child>{}() == ::xxeightser_expression_hash_t<Parent>{}(*c));
 
         EXPECT("polymorphic.derived value", d->data == sv_c_d && d->value == sv_c_v);
     }

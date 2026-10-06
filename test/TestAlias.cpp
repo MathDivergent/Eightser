@@ -2,6 +2,8 @@
 
 #include <Eightser/BuiltIn/Alias.hpp>
 
+#include <string> // hash
+
 TEST_SPACE()
 {
 
@@ -21,7 +23,7 @@ SERIALIZABLE_DECLARATION(Base)
     #ifdef EIGHTSER_RTTI_ENABLE
     INSTANTIABLE(S)
     #else
-    INSTANTIABLE_KEY(EIGHTSER_STRING_HASH("Base"), S)
+    INSTANTIABLE_KEY(std::hash<std::string>{}("Base"), S)
     #endif // EIGHTSER_RTTI_ENABLE
 SERIALIZABLE_DECLARATION_INIT()
 
@@ -36,7 +38,7 @@ SERIALIZABLE_DECLARATION(Derived)
     #ifdef EIGHTSER_RTTI_ENABLE
     INSTANTIABLE(S)
     #else
-    INSTANTIABLE_KEY(EIGHTSER_STRING_HASH("Derived"), S)
+    INSTANTIABLE_KEY(std::hash<std::string>{}("Derived"), S)
     #endif // EIGHTSER_RTTI_ENABLE
 SERIALIZABLE_DECLARATION_INIT()
 

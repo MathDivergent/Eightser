@@ -1,7 +1,7 @@
 #ifndef BASE_OBJECT_HPP
 #define BASE_OBJECT_HPP
 
-#include <string>
+#include <string> // string, hash
 
 #include <EightserTestingBase.hpp>
 
@@ -15,7 +15,7 @@ SERIALIZABLE_DECLARATION(BaseObject)
     #ifdef EIGHTSER_RTTI_ENABLE
     INSTANTIABLE(S)
     #else
-    INSTANTIABLE_KEY(EIGHTSER_STRING_HASH("BaseObject"), S)
+    INSTANTIABLE_KEY(std::hash<std::string>{}("BaseObject"), S)
     #endif // EIGHTSER_RTTI_ENABLE
 SERIALIZABLE_DECLARATION_INIT()
 
