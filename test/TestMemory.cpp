@@ -2,6 +2,8 @@
 
 #include <Eightser/Standard/unique_ptr.hpp>
 
+#include <string> // hash
+
 TEST_SPACE()
 {
 
@@ -27,7 +29,7 @@ SERIALIZABLE_DECLARATION(Parent)
     #ifdef EIGHTSER_RTTI_ENABLE
     INSTANTIABLE(S)
     #else
-    INSTANTIABLE_KEY(EIGHTSER_STRING_HASH("Parent"), S)
+    INSTANTIABLE_KEY(std::hash<std::string>{}("Parent"), S)
     #endif // EIGHTSER_RTTI_ENABLE
 SERIALIZABLE_DECLARATION_INIT()
 
@@ -42,7 +44,7 @@ SERIALIZABLE_DECLARATION(Child)
     #ifdef EIGHTSER_RTTI_ENABLE
     INSTANTIABLE(S)
     #else
-    INSTANTIABLE_KEY(EIGHTSER_STRING_HASH("Child"), S)
+    INSTANTIABLE_KEY(std::hash<std::string>{}("Child"), S)
     #endif // EIGHTSER_RTTI_ENABLE
 SERIALIZABLE_DECLARATION_INIT()
 

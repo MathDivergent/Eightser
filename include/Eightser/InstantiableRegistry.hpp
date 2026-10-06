@@ -87,7 +87,7 @@ public:
         }
         else
         {
-            return EIGHTSER_TYPE_HASH(InstantiableType);
+            return ::xxeightser_type_hash_t<InstantiableType>{}();
         }
     }
 
@@ -145,7 +145,7 @@ public:
 
             all.emplace(instantiable_key, proxy);
 
-            auto const hash = EIGHTSER_TYPE_HASH(InstantiableType);
+            auto const hash = ::xxeightser_type_hash_t<InstantiableType>{}();
             dynamic_all.emplace(hash, proxy);
         }
     }
