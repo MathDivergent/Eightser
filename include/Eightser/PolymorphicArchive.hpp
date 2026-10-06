@@ -58,7 +58,7 @@ private:
         else
         {
             #ifdef EIGHTSER_DEBUG
-            if (EIGHTSER_EXPRESSION_HASH(archive) != EIGHTSER_TYPE_HASH(DerivedArchiveType))
+            if (::xxeightser_expression_hash_t<ioarchive_t>{}(archive) != ::xxeightser_type_hash_t<DerivedArchiveType>{}())
                 throw "The read/write archive was registered incorrect.";
             #endif // EIGHTSER_DEBUG
             try_call_impl<DerivedArchiveType>(static_cast<DerivedArchiveType&>(archive), data);

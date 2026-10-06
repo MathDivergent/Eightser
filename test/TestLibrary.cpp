@@ -79,6 +79,8 @@ TEST(TestLibrary, TestValidation)
     #endif // EIGHTSER_DEBUG
 }
 
+#include <string> // hash
+
 TEST_SPACE()
 {
 
@@ -93,9 +95,9 @@ class Square {};
 SERIALIZABLE_DECLARATION(Triangle)
     // export Triangle as Cyrcle - will collide
     #ifdef EIGHTSER_RTTI_ENABLE
-    INSTANTIABLE_KEY(EIGHTSER_TYPE_HASH(Cyrcle), S)
+    INSTANTIABLE_KEY(::xxeightser_type_hash_t<Cyrcle>{}(), S)
     #else
-    INSTANTIABLE_KEY(EIGHTSER_STRING_HASH("Cyrcle"), S)
+    INSTANTIABLE_KEY(std::hash<std::string>{}("Cyrcle"), S)
     #endif // EIGHTSER_RTTI_ENABLE
 SERIALIZABLE_DECLARATION_INIT()
 
@@ -184,7 +186,7 @@ struct MyCustomType : instantiable_t {};
 } // TEST_SPACE
 
 SERIALIZABLE_DECLARATION(MyStruct)
-    INSTANTIABLE_KEY(EIGHTSER_STRING_HASH("MyClass"), S)
+    INSTANTIABLE_KEY(std::hash<std::string>{}("MyClass"), S)
 SERIALIZABLE_DECLARATION_INIT()
 
 SERIALIZABLE_SAVELOAD(self, MyStruct)
@@ -192,7 +194,7 @@ SERIALIZABLE_SAVELOAD(self, MyStruct)
 SERIALIZABLE_INIT()
 
 SERIALIZABLE_DECLARATION(MyClass)
-    INSTANTIABLE_KEY(EIGHTSER_STRING_HASH("MyStruct"), S)
+    INSTANTIABLE_KEY(std::hash<std::string>{}("MyStruct"), S)
 SERIALIZABLE_DECLARATION_INIT()
 
 SERIALIZABLE_SAVELOAD(self, MyClass)
@@ -200,7 +202,7 @@ SERIALIZABLE_SAVELOAD(self, MyClass)
 SERIALIZABLE_INIT()
 
 SERIALIZABLE_DECLARATION(MyDerivedClass)
-    INSTANTIABLE_KEY(EIGHTSER_STRING_HASH("MyDerived"), S)
+    INSTANTIABLE_KEY(std::hash<std::string>{}("MyDerived"), S)
 SERIALIZABLE_DECLARATION_INIT()
 
 SERIALIZABLE_SAVELOAD(self, MyDerivedClass)
@@ -211,7 +213,7 @@ SERIALIZABLE_DECLARATION(MyCustomType)
     #ifdef EIGHTSER_RTTI_ENABLE
     INSTANTIABLE(S)
     #else
-    INSTANTIABLE_KEY(EIGHTSER_STRING_HASH("MyCustomType"), S)
+    INSTANTIABLE_KEY(std::hash<std::string>{}("MyCustomType"), S)
     #endif // EIGHTSER_RTTI_ENABLE
 SERIALIZABLE_DECLARATION_INIT()
 
@@ -223,8 +225,8 @@ TEST(TestLibrary, TestExportInstantiable)
 {
     using eightser::instantiable_registry;
 
-    static auto sv_s = EIGHTSER_STRING_HASH("MyClass");
-    static auto sv_c = EIGHTSER_STRING_HASH("MyStruct");
+    static auto sv_s = std::hash<std::string>{}("MyClass");
+    static auto sv_c = std::hash<std::string>{}("MyStruct");
 
     {
         EXPECT("export instantiable key.traits",
@@ -233,21 +235,21 @@ TEST(TestLibrary, TestExportInstantiable)
     }
 
     #ifdef EIGHTSER_RTTI_ENABLE
-    static auto sv_ct = EIGHTSER_TYPE_HASH(MyCustomType);
+    static auto sv_ct = ::xxeightser_type_hash_t<MyCustomType>{}();
     #else
-    static auto sv_ct = EIGHTSER_STRING_HASH("MyCustomType");
+    static auto sv_ct = std::hash<std::string>{}("MyCustomType");
     #endif // EIGHTSER_RTTI_ENABLE
     {
         EXPECT("export instantiable.equivalent", instantiable_registry()->key<MyCustomType>() == sv_ct);
     }
 
-    static auto sv_dc = EIGHTSER_STRING_HASH("MyDerived");
+    static auto sv_dc = std::hash<std::string>{}("MyDerived");
 
     {
         std::shared_ptr<MyClass> b = std::make_shared<MyDerivedClass>();
         auto& rb = *b;
 
-        EXPECT("instantiable runtime key.traits", instantiable_registry()->dynamic_all.at(EIGHTSER_EXPRESSION_HASH(rb)).key == sv_dc);
+        EXPECT("instantiable runtime key.traits", instantiable_registry()->dynamic_all.at(::xxeightser_expression_hash_t<MyClass>{}(rb)).key == sv_dc);
     }
 }
 
@@ -774,7 +776,7 @@ SERIALIZABLE_DECLARATION(Interface)
     #ifdef EIGHTSER_RTTI_ENABLE
     INSTANTIABLE(S)
     #else
-    INSTANTIABLE_KEY(EIGHTSER_STRING_HASH("Interface"), S)
+    INSTANTIABLE_KEY(std::hash<std::string>{}("Interface"), S)
     #endif // EIGHTSER_RTTI_ENABLE
 SERIALIZABLE_DECLARATION_INIT()
 
@@ -786,7 +788,7 @@ SERIALIZABLE_DECLARATION(Implementation)
     #ifdef EIGHTSER_RTTI_ENABLE
     INSTANTIABLE(S)
     #else
-    INSTANTIABLE_KEY(EIGHTSER_STRING_HASH("Implementation"), S)
+    INSTANTIABLE_KEY(std::hash<std::string>{}("Implementation"), S)
     #endif // EIGHTSER_RTTI_ENABLE
 SERIALIZABLE_DECLARATION_INIT()
 
@@ -818,7 +820,7 @@ TEST(TestLibrary, TestAbstract)
 
         auto& ri = *i;
 
-        const auto hash = EIGHTSER_EXPRESSION_HASH(ri);
+        const auto hash = ::xxeightser_expression_hash_t<Interface>{}(ri);
         const auto key = instantiable_registry()->key<Implementation>();
 
         EXPECT("traits", instantiable_registry()->dynamic_all.at(hash).key == instantiable_registry()->all.at(key).key);
@@ -893,7 +895,7 @@ struct xxeightser<NoMacroBase>
 
     static ::xxeightser_instantiable_traits_key_type key()
     {
-        return EIGHTSER_STRING_HASH("NoMacroDerived");
+        return std::hash<std::string>{}("NoMacroDerived");
     }
 };
 
