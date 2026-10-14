@@ -6,10 +6,6 @@
 #include <Eightser/Detail/Meta.hpp>
 #include <Eightser/Detail/Macro.hpp> // EIGHTSER_DEPAREN
 
-#ifndef EIGHTSER_ARCHIVE_TRAIT_MAX_KEY_SIZE
-    #define EIGHTSER_ARCHIVE_TRAIT_MAX_KEY_SIZE 4
-#endif // EIGHTSER_ARCHIVE_TRAIT_MAX_KEY_SIZE
-
 #define VISIBLE_SERIALIZABLE_ARCHIVE_DECLARATION(module_api, archive_key, ... /*archive_type*/) \
     extern template class EIGHTSER_DEPAREN(module_api) __VA_ARGS__; \
     template <> struct xxeightser_archive_traits<__VA_ARGS__> { \

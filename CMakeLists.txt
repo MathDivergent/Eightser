@@ -44,6 +44,18 @@ endif()
 
 set(EIGHTSER_WARNING_FLAGS "-Wall" "-Wextra" "-Wpedantic" "-Werror")
 
+if(EIGHTSER_ARCHIVE_TRAIT_MAX_KEY_SIZE)
+    if(EIGHTSER_ARCHIVE_TRAIT_MAX_KEY_SIZE GREATER_EQUAL 16)
+        message(WARNING "Eightser: recommended to use EIGHTSER_ARCHIVE_TRAIT_MAX_KEY_SIZE < 16, otherwise it may cause performance issues")
+    endif()
+else()
+    set(EIGHTSER_ARCHIVE_TRAIT_MAX_KEY_SIZE 4)
+endif()
+
+if(NOT EIGHTSER_BYTE_STREAM_RESERVE_SIZE)
+    set(EIGHTSER_BYTE_STREAM_RESERVE_SIZE 4096)
+endif()
+
 
 # [[Launcher][Defaults]]
 if(PROJECT_IS_TOP_LEVEL AND EIGHTSER_BUILD_TEST_LIBS)
@@ -116,6 +128,9 @@ endif()
 if(EIGHTSER_WARNING_FLAGS_ENABLE)
     target_compile_options(Eightser PRIVATE ${EIGHTSER_WARNING_FLAGS})
 endif()
+
+target_compile_definitions(Eightser PUBLIC "EIGHTSER_ARCHIVE_TRAIT_MAX_KEY_SIZE=${EIGHTSER_ARCHIVE_TRAIT_MAX_KEY_SIZE}")
+target_compile_definitions(Eightser PUBLIC "EIGHTSER_BYTE_STREAM_RESERVE_SIZE=${EIGHTSER_BYTE_STREAM_RESERVE_SIZE}")
 
 
 # [[Tests][Defaults]]
