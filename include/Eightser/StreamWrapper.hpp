@@ -10,10 +10,6 @@
 
 #include <Eightser/Memory.hpp>
 
-#ifndef EIGHTSER_BYTE_STREAM_RESERVE_SIZE
-    #define EIGHTSER_BYTE_STREAM_RESERVE_SIZE std::size_t(4096)
-#endif // EIGHTSER_BYTE_STREAM_RESERVE_SIZE
-
 namespace eightser
 {
 
@@ -35,7 +31,7 @@ public:
 public:
     obyte_stream_t(OutputStreamType& stream) noexcept : storage(stream)
     {
-        storage.reserve(EIGHTSER_BYTE_STREAM_RESERVE_SIZE); // default reserve memory
+        storage.reserve(std::size_t(EIGHTSER_BYTE_STREAM_RESERVE_SIZE)); // default reserve memory
     }
 
     template <typename ArithmeticType>
