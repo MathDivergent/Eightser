@@ -13,4 +13,21 @@
 using xxeightser_instantiable_traits_key_type = std::uint64_t;
 static constexpr auto xxeightser_instantiable_traits_base_key = xxeightser_instantiable_traits_key_type(-1);
 
+
+namespace eightser
+{
+
+struct instantiable_t;
+
+} // namespace eightser
+
+// By default library will use instantiable_t type for general instancing,
+// if you want to specify behaviour, just specialize own xxeightser_instantiable_traits
+// Note that: any declared instantiable_type must have virtual destructor
+template <class SerializableType, typename enable = void>
+struct xxeightser_instantiable_traits
+{
+    using instantiable_type = ::eightser::instantiable_t;
+};
+
 #endif // EIGHTSER_INSTANTIABLE_TRAITS_HPP

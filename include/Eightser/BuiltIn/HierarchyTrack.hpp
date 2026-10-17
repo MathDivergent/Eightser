@@ -27,7 +27,7 @@ template <class BaseType, class ArchiveType, class DerivedType,
 void virtual_base(ArchiveType& archive, DerivedType& object)
 {
     #ifdef EIGHTSER_PTRTRACK_ENABLE
-    auto address = hold_type_erasure(std::addressof(object));
+    auto address = to_instantiable(std::addressof(object));
 
     auto const key = reinterpret_cast<std::uintptr_t>(address);
     auto const traits = ::xxeightser_type_hash_t<BaseType>{}();

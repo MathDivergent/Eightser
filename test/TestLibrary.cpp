@@ -249,7 +249,7 @@ TEST(TestLibrary, TestExportInstantiable)
         std::shared_ptr<MyClass> b = std::make_shared<MyDerivedClass>();
         auto& rb = *b;
 
-        EXPECT("instantiable runtime key.traits", instantiable_registry()->dynamic_all.at(::xxeightser_expression_hash_t<MyClass>{}(rb)).key == sv_dc);
+        EXPECT("instantiable runtime key.traits", instantiable_registry()->rtti_all.at(::xxeightser_expression_hash_t<MyClass>{}(rb)).key == sv_dc);
     }
 }
 
@@ -823,7 +823,7 @@ TEST(TestLibrary, TestAbstract)
         const auto hash = ::xxeightser_expression_hash_t<Interface>{}(ri);
         const auto key = instantiable_registry()->key<Implementation>();
 
-        EXPECT("traits", instantiable_registry()->dynamic_all.at(hash).key == instantiable_registry()->all.at(key).key);
+        EXPECT("traits", instantiable_registry()->rtti_all.at(hash).key == instantiable_registry()->all.at(key).key);
     }
 }
 
@@ -836,7 +836,7 @@ struct NoMacroObject
 };
 
 // since we want to serialize object using pointer to base type,
-// we should inherit from instantiable type, which defined by macro INSTANTIABLE_TYPE
+// we should inherit from instantiable type, which declared by xxeightser_instantiable_traits template
 // Note that: any derived type from instantiable becomes polymorphic,
 // becose instantiable type has virtual destructor (requrement of eightser library)
 struct NoMacroBase : eightser::instantiable_t

@@ -48,7 +48,7 @@ public:
         bool is_mixed(std::uintptr_t refer_key, PointerType const&) const noexcept
         {
             using pointer_traits = memory::pointer_traits<PointerType>;
-            using pointer_hold_type = typename pointer_traits::template pointer_template<INSTANTIABLE_TYPE>;
+            using pointer_hold_type = typename pointer_traits::template pointer_template<void>;
 
             return ((std::is_same_v<pointer_hold_type, HoldPointerTypes> ?
                     0 : oarchive_track_overload_t<HoldPointerTypes>::xxpointer.count(refer_key)) + ...) > 0;

@@ -25,7 +25,7 @@ std::uintptr_t tracking_key(ArchiveType& archive, PointerType& pointer)
 {
     auto key = reinterpret_cast<std::uintptr_t>
     (
-        memory::raw(hold_type_erasure(pointer))
+        memory::raw(to_instantiable(pointer))
     );
 
     archive & key;
@@ -77,7 +77,7 @@ void strict(ArchiveType& archive, PointerType& pointer)
     if constexpr (meta::is_pointer_to_polymorphic<PointerType>::value)
     {
         auto const hash = ::xxeightser_expression_hash_t<typename memory::pointer_traits<PointerType>::element_type>{}(*pointer);
-        auto const& proxy = instantiable_registry()->dynamic_all.at(hash);
+        auto const& proxy = instantiable_registry()->rtti_all.at(hash);
 
         auto key = proxy.key;
         archive & key;
@@ -93,7 +93,7 @@ void strict(ArchiveType& archive, PointerType& pointer)
 template <class ArchiveType, typename PointerType, typename PointerHoldType,
           EIGHTSER_REQUIRES(std::conjunction_v<meta::is_iarchive<ArchiveType>,
                                                meta::is_pointer_to_any<PointerType>>)>
-void strict(ArchiveType& archive, PointerType& pointer, PointerHoldType& cache)
+void strict(ArchiveType& archive, PointerType& pointer, PointerHoldType& registry_element_fixture)
 {
     #ifdef EIGHTSER_GARBAGE_CHECK_ENABLE
     if (pointer != nullptr)
@@ -107,12 +107,12 @@ void strict(ArchiveType& archive, PointerType& pointer, PointerHoldType& cache)
 
         auto const& proxy = instantiable_registry()->all.at(key);
 
-        instantiable_registry()->load(archive, pointer, proxy, cache);
+        instantiable_registry()->load(archive, pointer, proxy, registry_element_fixture);
     }
     else
     {
         memory::allocate(pointer);
-        cache = hold_type_erasure(pointer);
+        registry_element_fixture = to_instantiable(pointer);
 
         archive & (*pointer);
     }
@@ -124,7 +124,7 @@ template <class ArchiveType, typename PointerType,
 void track(ArchiveType& archive, PointerType& pointer)
 {
     // need to overload tracking
-    using pointer_hold_type = typename memory::pointer_traits<PointerType>::template pointer_template<INSTANTIABLE_TYPE>;
+    using pointer_hold_type = typename memory::pointer_traits<PointerType>::template pointer_template<void>;
 
     auto const key = detail::tracking_key(archive, pointer); // serialize refer info
     if (not key) return;
@@ -147,11 +147,11 @@ template <class ArchiveType, typename SerializableType,
                                                std::negation<meta::is_pointer_to_any<SerializableType>>>)>
 void track(ArchiveType& archive, SerializableType& data)
 {
-    using pointer_hold_type = INSTANTIABLE_TYPE*; // need to overload tracking
+    using pointer_hold_type = void*; // need to overload tracking
 
     auto key = reinterpret_cast<std::uintptr_t>
     (
-        hold_type_erasure(std::addressof(data))
+        to_instantiable(std::addressof(data))
     );
 
     auto& is_tracking = archive.tracking().pointer(pointer_hold_type())[key];
@@ -170,7 +170,7 @@ template <class ArchiveType, typename PointerType,
 void track(ArchiveType& archive, PointerType& pointer)
 {
     // need to overload tracking
-    using pointer_hold_type = typename memory::pointer_traits<PointerType>::template pointer_template<INSTANTIABLE_TYPE>;
+    using pointer_hold_type = typename memory::pointer_traits<PointerType>::template pointer_template<void>;
 
     #ifdef EIGHTSER_GARBAGE_CHECK_ENABLE
     if (pointer != nullptr)
@@ -197,7 +197,7 @@ template <class ArchiveType, typename SerializableType,
                                                std::negation<meta::is_pointer_to_any<SerializableType>>>)>
 void track(ArchiveType& archive, SerializableType& data)
 {
-    using pointer_hold_type = INSTANTIABLE_TYPE*; // need to overload tracking
+    using pointer_hold_type = void*; // need to overload tracking
 
     std::uintptr_t key{};
     archive & key;
@@ -208,7 +208,7 @@ void track(ArchiveType& archive, SerializableType& data)
     if (address != nullptr)
         throw  "The read tracking data is already tracked.";
 
-    address = hold_type_erasure(pointer);
+    address = to_instantiable(pointer);
     archive & data;
 }
 
@@ -218,8 +218,8 @@ void raw(ArchiveType& archive, PointerType& pointer)
 {
     if (detail::tracking_key(archive, pointer)) // serialize refer info
     {
-        typename memory::pointer_traits<PointerType>::template pointer_template<INSTANTIABLE_TYPE> cache = nullptr; // mock
-        strict(archive, pointer, cache);
+        typename memory::pointer_traits<PointerType>::template pointer_template<void> registry_element_fixture = nullptr; // mock
+        strict(archive, pointer, registry_element_fixture);
     }
 }
 

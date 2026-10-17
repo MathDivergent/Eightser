@@ -54,7 +54,7 @@ SERIALIZABLE_DECLARATION_INIT()
 TEMPLATE_SERIALIZABLE_SAVE(alias, template <typename ElementType>, ::eightser::alias_t<ElementType>)
     BIN_SERIALIZABLE
     (
-        using pointer_hold_type = INSTANTIABLE_TYPE*; // need to overload tracking
+        using pointer_hold_type = void*; // need to overload tracking
 
         if (not alias.is_refer())
             throw "The write alias_t must be initialized.";
@@ -76,7 +76,7 @@ TEMPLATE_SERIALIZABLE_LOAD(alias, template <typename ElementType>, ::eightser::a
     #endif // EIGHTSER_GARBAGE_CHECK_ENABLE
     BIN_SERIALIZABLE
     (
-        using pointer_hold_type = INSTANTIABLE_TYPE*; // need to overload tracking
+        using pointer_hold_type = void*; // need to overload tracking
 
         std::uintptr_t key{};
         archive & key;

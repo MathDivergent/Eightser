@@ -11,13 +11,12 @@
 #include <Eightser/PolymorphicArchive.hpp>
 
 #include <Eightser/Instantiable.hpp>
-#include <Eightser/InstantiableTraits.hpp>
 
-// By default library will use 'INSTANTIABLE_TYPE*' and 'std::shared_ptr<INSTANTIABLE_TYPE>' types for general instancing,
+// By default library will use 'void*' and 'std::shared_ptr<void>' types for general instancing,
 // if you want to specify behaviour, just define own POINTER_HOLD_TYPES
 // Note that: any used ptr type should be provided in '::eightser::memory' namespace
 #ifndef POINTER_HOLD_TYPES
-    #define POINTER_HOLD_TYPES INSTANTIABLE_TYPE*, std::shared_ptr<INSTANTIABLE_TYPE>
+    #define POINTER_HOLD_TYPES void*, std::shared_ptr<void>
 #endif // POINTER_HOLD_TYPES
 
 namespace eightser
@@ -29,7 +28,7 @@ public:
     template <typename PointerHoldType>
     struct instantiable_proxy_overload_t
     {
-        using instantiable_pointer_type = typename memory::pointer_traits<PointerHoldType>::template pointer_template<INSTANTIABLE_TYPE>;
+        using instantiable_pointer_type = typename memory::pointer_traits<PointerHoldType>::template pointer_template<void>;
 
         instantiable_pointer_type(*xxclone)() = nullptr;
     };
@@ -39,8 +38,8 @@ public:
     {
         ::xxeightser_instantiable_traits_key_type key = ::xxeightser_instantiable_traits_base_key;
 
-        void(*save)(ioarchive_t&, INSTANTIABLE_TYPE*) = nullptr;
-        void(*load)(ioarchive_t&, INSTANTIABLE_TYPE*) = nullptr;
+        void(*save)(ioarchive_t&, void*) = nullptr;
+        void(*load)(ioarchive_t&, void*) = nullptr;
     };
 
 public:
@@ -48,12 +47,14 @@ public:
 
 public:
     std::unordered_map<::xxeightser_instantiable_traits_key_type, instantiable_proxy_type> all;
-    std::unordered_map<std::uint64_t, instantiable_proxy_type> dynamic_all;
+    std::unordered_map<std::uint64_t, instantiable_proxy_type> rtti_all;
 
 public:
-    template <typename InstantiableType> struct is_instantiable
-        : std::disjunction<meta::is_static_castable<InstantiableType*, INSTANTIABLE_TYPE*>,
-                           std::is_convertible<InstantiableType*, INSTANTIABLE_TYPE*>> {};
+    template <typename DerivedInstantiableType,
+              class BaseInstantiableType = ::xxeightser_instantiable_traits<DerivedInstantiableType>::instantiable_type> 
+    struct is_instantiable
+        : std::disjunction<meta::is_static_castable<DerivedInstantiableType*, BaseInstantiableType*>,
+                           std::is_convertible<DerivedInstantiableType*, BaseInstantiableType*>> {};
 
 private:
     template <class InstantiableType>
@@ -66,7 +67,7 @@ private:
         {
             typename memory::pointer_traits<OtherPointerHoldType>::template pointer_template<InstantiableType> pointer = nullptr;
             memory::allocate(pointer);
-            return memory::static_pointer_cast<INSTANTIABLE_TYPE>(pointer);
+            return memory::static_pointer_cast<void>(to_instantiable(pointer));
         };
 
         add_impl<InstantiableType, OtherPointerHoldTypes...>(proxy);
@@ -78,7 +79,7 @@ private:
     struct has_key<SerializableType, std::void_t<decltype(&::xxeightser<SerializableType>::key)>> : std::true_type {};
 
 public:
-    template <typename InstantiableType>
+    template <class InstantiableType>
     ::xxeightser_instantiable_traits_key_type key()
     {
         if constexpr (has_key<InstantiableType>::value)
@@ -92,61 +93,67 @@ public:
     }
 
 public:
-    template <class InstantiableType>
+    template <class DerivedInstantiableType>
     void add()
     {
-        if constexpr (is_instantiable<InstantiableType>::value)
+        if constexpr (is_instantiable<DerivedInstantiableType>::value)
         {
+            using base_instantiable_type = ::xxeightser_instantiable_traits<DerivedInstantiableType>::instantiable_type;
+
             static auto lock = false; if (lock) return;
             lock = true;
 
-            auto const instantiable_key = key<InstantiableType>();
+            auto const instantiable_key = key<DerivedInstantiableType>();
             #ifdef EIGHTSER_DEBUG
             if (instantiable_key == ::xxeightser_instantiable_traits_base_key)
                 throw "The 'eightser::instantiable_registry_t' must contains instance with valid key.";
             #endif // EIGHTSER_DEBUG
             instantiable_proxy_type proxy;
 
-            add_impl<InstantiableType, POINTER_HOLD_TYPES>(proxy);
+            add_impl<DerivedInstantiableType, POINTER_HOLD_TYPES>(proxy);
 
             proxy.key = instantiable_key;
 
-            proxy.save = [](ioarchive_t& archive, INSTANTIABLE_TYPE* instance)
+            proxy.save = [](ioarchive_t& archive, void* address)
             {
-                if constexpr (meta::is_static_castable<INSTANTIABLE_TYPE*, InstantiableType*>::value)
+                [[maybe_unused]] auto instantiable = to_instantiable(address);
+
+                if constexpr (meta::is_static_castable<base_instantiable_type*, DerivedInstantiableType*>::value)
                 {
-                    archive << *memory::static_pointer_cast<InstantiableType>(instance);
+                    archive << *memory::static_pointer_cast<DerivedInstantiableType>(instantiable);
                 }
                 else
                 {
                     #ifdef EIGHTSER_RTTI_ENABLE
-                    archive << *memory::dynamic_pointer_cast<InstantiableType>(instance);
+                    archive << *memory::dynamic_pointer_cast<DerivedInstantiableType>(instantiable);
                     #else
-                    static_assert(meta::to_false<InstantiableType>(), "Serialization via virtual base not allowed.");
+                    static_assert(meta::to_false<DerivedInstantiableType>(), "Serialization via virtual base not allowed.");
                     #endif // EIGHTSER_RTTI_ENABLE
                 }
             };
 
-            proxy.load = [](ioarchive_t& archive, INSTANTIABLE_TYPE* instance)
+            proxy.load = [](ioarchive_t& archive, void* address)
             {
-                if constexpr (meta::is_static_castable<INSTANTIABLE_TYPE*, InstantiableType*>::value)
+                [[maybe_unused]] auto instantiable = to_instantiable(address);
+
+                if constexpr (meta::is_static_castable<base_instantiable_type*, DerivedInstantiableType*>::value)
                 {
-                    archive >> *memory::static_pointer_cast<InstantiableType>(instance);
+                    archive >> *memory::static_pointer_cast<DerivedInstantiableType>(instantiable);
                 }
                 else
                 {
                     #ifdef EIGHTSER_RTTI_ENABLE
-                    archive >> *memory::dynamic_pointer_cast<InstantiableType>(instance);
+                    archive >> *memory::dynamic_pointer_cast<DerivedInstantiableType>(instantiable);
                     #else
-                    static_assert(meta::to_false<InstantiableType>(), "Deserialization via virtual base not allowed.");
+                    static_assert(meta::to_false<DerivedInstantiableType>(), "Deserialization via virtual base not allowed.");
                     #endif // EIGHTSER_RTTI_ENABLE
                 }
             };
 
             all.emplace(instantiable_key, proxy);
 
-            auto const hash = ::xxeightser_type_hash_t<InstantiableType>{}();
-            dynamic_all.emplace(hash, proxy);
+            auto const hash = ::xxeightser_type_hash_t<DerivedInstantiableType>{}();
+            rtti_all.emplace(hash, proxy);
         }
     }
 
@@ -172,16 +179,17 @@ public:
     template <typename PointerType>
     void save(ioarchive_t& archive, PointerType& pointer, instantiable_proxy_type const& proxy) const
     {
-        proxy.save(archive, memory::raw(pointer));
+        proxy.save(archive, memory::raw(to_instantiable(pointer)));
     }
 
     template <typename PointerType, typename PointerHoldType>
-    void load(ioarchive_t& archive, PointerType& pointer, instantiable_proxy_type const& proxy, PointerHoldType& cache) const
+    void load(ioarchive_t& archive, PointerType& pointer, instantiable_proxy_type const& proxy, PointerHoldType& registry_element_fixture) const
     {
         clone(pointer, proxy);
-        cache = pointer;
+        auto instantiable = to_instantiable(pointer);
 
-        proxy.load(archive, memory::raw(pointer));
+        registry_element_fixture = instantiable;
+        proxy.load(archive, memory::raw(instantiable));
     }
 
 public:
@@ -191,14 +199,14 @@ public:
         using pointer_traits = memory::pointer_traits<PointerType>;
 
         using serializable_type = typename pointer_traits::element_type;
-        using pointer_hold_type = typename pointer_traits::template pointer_template<INSTANTIABLE_TYPE>;
+        using pointer_hold_type = typename pointer_traits::template pointer_template<void>;
 
-        auto instance = proxy.instantiable_proxy_overload_t<pointer_hold_type>::xxclone();
+        auto instantiable = to_instantiable(proxy.instantiable_proxy_overload_t<pointer_hold_type>::xxclone());
 
         #ifdef EIGHTSER_RTTI_ENABLE
-        pointer = memory::dynamic_pointer_cast<serializable_type>(instance);
+        pointer = memory::dynamic_pointer_cast<serializable_type>(instantiable);
         #else
-        pointer = memory::static_pointer_cast<serializable_type>(instance);
+        pointer = memory::static_pointer_cast<serializable_type>(instantiable);
         #endif // EIGHTSER_RTTI_ENABLE
     }
 
@@ -207,10 +215,12 @@ public:
     {
         using serializable_type = typename memory::pointer_traits<PointerType>::element_type;
 
+        auto instantiable = to_instantiable(address);
+
         #ifdef EIGHTSER_RTTI_ENABLE
-        pointer = memory::dynamic_pointer_cast<serializable_type>(address);
+        pointer = memory::dynamic_pointer_cast<serializable_type>(instantiable);
         #else
-        pointer = memory::static_pointer_cast<serializable_type>(address);
+        pointer = memory::static_pointer_cast<serializable_type>(instantiable);
         #endif // EIGHTSER_RTTI_ENABLE
     }
 };
