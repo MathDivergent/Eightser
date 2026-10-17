@@ -2,13 +2,7 @@
 #define EIGHTSER_INSTANTIABLE_HPP
 
 #include <Eightser/Memory.hpp>
-
-// By default library will use instantiable_t type for general instancing,
-// if you want to specify behaviour, just define own INSTANTIABLE_TYPE
-// Note that: any defined INSTANTIABLE_TYPE must have virtual destructor
-#ifndef INSTANTIABLE_TYPE
-    #define INSTANTIABLE_TYPE ::eightser::instantiable_t
-#endif // INSTANTIABLE_TYPE
+#include <Eightser/InstantiableTraits.hpp>
 
 namespace eightser
 {
@@ -19,15 +13,18 @@ struct EIGHTSER_API instantiable_t
 };
 
 template <typename PointerType>
-typename memory::pointer_traits<PointerType>::template pointer_template<INSTANTIABLE_TYPE> hold_type_erasure(PointerType const& pointer)
+auto to_instantiable(PointerType const& pointer)
 {
+    using serializable_type = typename memory::pointer_traits<PointerType>::element_type;
+    using instantiable_type = typename ::xxeightser_instantiable_traits<serializable_type>::instantiable_type;
+
     if constexpr (meta::is_pointer_to_polymorphic<PointerType>::value)
     {
-        return pointer;
+        return memory::static_pointer_cast<instantiable_type>(pointer);
     }
     else
     {
-        return memory::static_pointer_cast<INSTANTIABLE_TYPE>(memory::static_pointer_cast<void>(pointer));
+        return memory::static_pointer_cast<instantiable_type>(memory::static_pointer_cast<void>(pointer));
     }
 }
 
